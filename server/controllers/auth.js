@@ -1,7 +1,7 @@
 const AppError = require('../classes/AppError')
 const mongoose = require('mongoose')
 const User = mongoose.model('User')
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
 exports.signup = async (req, res) => {

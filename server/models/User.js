@@ -14,6 +14,17 @@ const schema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  currentLocation: {
+    timestamp: Number,
+    coords: {
+      latitude: Number,
+      longitude: Number,
+      altitude: Number,
+      accuracy: Number,
+      heading: Number,
+      speed: Number,
+    },
+  },
 })
 
 schema.methods.transform = function () {

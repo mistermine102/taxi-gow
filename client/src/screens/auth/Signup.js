@@ -1,9 +1,9 @@
 import { View } from 'react-native'
-import BaseInput from '../components/base/BaseInput'
-import BaseButton from '../components/base/BaseButton'
-import BaseLink from '../components/base/BaseLink'
+import BaseInput from '../../components/base/BaseInput'
+import BaseButton from '../../components/base/BaseButton'
+import BaseLink from '../../components/base/BaseLink'
 import { useContext, useState } from 'react'
-import AuthContext from '../context/Auth'
+import AuthContext from '../../context/Auth'
 
 const SignupScreen = ({ navigation }) => {
   const { signup } = useContext(AuthContext)

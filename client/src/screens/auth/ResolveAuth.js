@@ -1,5 +1,5 @@
 import { useEffect, useContext } from 'react'
-import AuthContext from '../context/Auth'
+import AuthContext from '../../context/Auth'
 
 const ResolveAuth = () => {
   const { tryLocalSignin } = useContext(AuthContext)
