@@ -2,6 +2,7 @@ require('dotenv').config()
 
 //models
 require('./models/User')
+require('./models/Route')
 
 //packages
 const express = require('express')
@@ -20,7 +21,9 @@ app.use(verifyToken)
 
 //routes
 const authRoutes = require('./routes/auth')
+const routesRoutes = require('./routes/route')
 app.use(authRoutes)
+app.use('/routes', routesRoutes)
 
 //invalid route
 app.all('*', (req, res) => {
