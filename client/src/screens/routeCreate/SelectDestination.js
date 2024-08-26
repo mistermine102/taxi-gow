@@ -5,7 +5,7 @@ import Map from '../../components/Map'
 import { useContext } from 'react'
 import RouteContext from '../../context/Route'
 
-const SelectDestination = () => {
+const SelectDestination = ({ navigation }) => {
   const { route, setDestination } = useContext(RouteContext)
   const { clientOrigin: origin, destination } = route
 
@@ -25,7 +25,7 @@ const SelectDestination = () => {
         <View className="mt-8">
           <Map directions={{ origin, destination }} />
           <View className="mt-4 px-8">
-            <BaseButton title="Kontynuuj" />
+            <BaseButton title="Kontynuuj" onPress={() => navigation.navigate('SelectDriver')} />
           </View>
         </View>
       ) : null}

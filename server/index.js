@@ -22,8 +22,10 @@ app.use(verifyToken)
 //routes
 const authRoutes = require('./routes/auth')
 const routesRoutes = require('./routes/route')
+const driversRoutes = require('./routes/driver')
 app.use(authRoutes)
 app.use('/routes', routesRoutes)
+app.use('/drivers', driversRoutes)
 
 //invalid route
 app.all('*', (req, res) => {
