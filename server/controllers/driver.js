@@ -1,16 +1,19 @@
 const mongoose = require('mongoose')
 const User = mongoose.model('User')
-const { Client } = require('@googlemaps/google-maps-services-js')
+const calculateDistances = require('../utils/calculateDistances')
 
 exports.getDrivers = async (req, res) => {
   //receive information about client's origin
-  const { latitude: clientLatitude, longitude: clientLongitude } = req.query
+  //origin and destination in format "37.223,17.998"
+  const { origin: clientOrigin, destination } = req.query
+
+  const routeDistanceData = await calculateDistances([clientOrigin], [destination])
+  const { distance: routeDistance, duration: routeDuration } = routeDistanceData.rows[0].elements[0]
 
   //get drivers
   const drivers = await User.find({ role: 'driver' })
 
   //calculate distance and travel time for each driver
-  const client = new Client()
   const origins = []
 
   for (const driver of drivers) {
@@ -18,31 +21,42 @@ exports.getDrivers = async (req, res) => {
     origins.push(`${driverLatitude}, ${driverLongitude}`)
   }
 
-  const response = await client.distancematrix({
-    params: {
-      origins,
-      destinations: [`${clientLatitude},${clientLongitude}`],
-      units: 'metric',
-      key: process.env.GOOGLE_API_KEY,
-    },
-  })
+  const distancesData = await calculateDistances(origins, [clientOrigin])
 
   //sort driver's by their travel time to client's origin
   const tranformedDrivers = []
 
   for (let i = 0; i < drivers.length; i++) {
     const driver = drivers[i]
-    const row = response.data.rows[i].elements[0]
+    const row = distancesData.rows[i].elements[0]
+
+    //calculate drivers cost
+    //(total distance is in meters, we convert it to km)
+    const totalDistance = parseFloat(((row.distance.value + routeDistance.value) / 1000).toFixed(1))
+    const totalCost = parseFloat((totalDistance * driver.pricing.perKm + driver.pricing.initialCost).toFixed(2))
 
     tranformedDrivers.push({
       _id: driver._id,
       distance: row.distance,
       duration: row.duration,
+      cost: {
+        total: totalCost,
+        initialCost: driver.pricing.initialCost,
+        perKm: driver.pricing.perKm,
+        totalKm: totalDistance,
+        currency: driver.pricing.currency,
+      },
     })
   }
 
   tranformedDrivers.sort((a, b) => a.duration.value - b.duration.value)
 
   ///send response
-  res.json({ drivers: tranformedDrivers })
+  res.json({
+    drivers: tranformedDrivers,
+    route: {
+      distance: routeDistance,
+      duration: routeDuration,
+    },
+  })
 }

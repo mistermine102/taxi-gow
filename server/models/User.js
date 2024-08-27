@@ -14,6 +14,11 @@ const schema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  pricing: {
+    perKm: Number,
+    initialCost: Number,
+    currency: String,
+  },
   currentLocation: {
     timestamp: Number,
     coords: {
