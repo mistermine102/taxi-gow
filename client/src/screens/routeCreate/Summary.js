@@ -14,9 +14,9 @@ const Summary = () => {
         <Text className="text-darkGray mb-1">Punkt końcowy: {route.destination.address}</Text>
         <Text className="text-darkGray mb-1">Długość tasy: ???</Text>
         <Text className="text-darkGray mb-1">Kierowca: {route.driver._id} </Text>
-        <Text className="text-darkGray mb-1">Koszt: ???</Text>
+        <Text className="text-darkGray mb-1">Koszt: {route.driver.cost.total.toFixed(2)} zł</Text>
         <Text className="text-darkGray mb-1">Czas oczekiwania: {route.driver.duration.text}</Text>
-        <Text className="text-darkGray mb-1">Czas podróży: ???</Text>
+        <Text className="text-darkGray mb-1">Czas podróży:</Text>
       </View>
       <BaseButton title="Zapłać" />
     </View>

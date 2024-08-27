@@ -8,7 +8,7 @@ const driverItem = ({ driver, isSelected = false }) => {
         <Text className="text-darkGray text-lg font-bold mb-1">{driver._id.slice(0, 15)}...</Text>
         <View className="flex-row items-center gap-1">
             <MaterialCommunityIcons name="cash" size={28} color="#4d4d4d" />
-            <Text className="text-darkGray text-lg font-semibold">5,60 zł</Text>
+            <Text className="text-darkGray text-lg font-semibold">{driver.cost.total.toFixed(2)} zł</Text>
         </View>
       </View>
       <View className="flex-row items-center gap-1">
