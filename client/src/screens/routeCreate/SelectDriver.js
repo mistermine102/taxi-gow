@@ -5,12 +5,11 @@ import RouteContext from '../../context/Route'
 import DriverItem from '../../components/DriverItem'
 import BaseButton from '../../components/base/BaseButton'
 
-const SelectDriver = () => {
-  const { route } = useContext(RouteContext)
+const SelectDriver = ({navigation}) => {
+  const { route, selectDriver } = useContext(RouteContext)
   const [drivers, setDrivers] = useState([])
   const { clientOrigin } = route
-  const { latitude, longitude } = clientOrigin
-  const [selectedDriver, setSelectedDriver] = useState()
+  const { latitude, longitude } = clientOrigin.coords
 
   useEffect(() => {
     const getDrivers = async () => {
@@ -34,13 +33,13 @@ const SelectDriver = () => {
           data={drivers}
           keyExtractor={d => d._id}
           renderItem={({ item }) => (
-            <TouchableOpacity onPress={() => setSelectedDriver(item)}>
-              <DriverItem driver={item} isSelected={selectedDriver ? selectedDriver._id === item._id : false } />
+            <TouchableOpacity onPress={() => selectDriver(item)}>
+              <DriverItem driver={item} isSelected={route.driver ? route.driver._id === item._id : false } />
             </TouchableOpacity>
           )}
         />
-      </View>
-      <BaseButton title='Kontynuuj'/>
+      </View> 
+      { route.driver ? <BaseButton title='Kontynuuj' onPress={() => navigation.navigate('Summary')}/> : null }
     </View>
   )
 }

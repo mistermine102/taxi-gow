@@ -20,6 +20,14 @@ const reducer = (state, { type, payload }) => {
           destination: payload,
         },
       }
+    case 'set_driver':
+      return {
+        ...state,
+        route: {
+          ...state.route,
+          driver: payload,
+        },
+      }
     default:
       return state
   }
@@ -29,7 +37,7 @@ export const Provider = ({ children }) => {
   const [{ route }, dispatch] = useReducer(reducer, {
     route: {
       clientOrigin: null,
-      driverOrigin: null,
+      driver: null,
       destination: null,
     },
   })
@@ -38,11 +46,15 @@ export const Provider = ({ children }) => {
     dispatch({ type: 'set_client_origin', payload: origin })
   }
 
+  const selectDriver = driver => {
+    dispatch({ type: 'set_driver', payload: driver })
+  }
+
   const setDestination = destination => {
     dispatch({ type: 'set_destination', payload: destination })
   }
 
-  return <Context.Provider value={{ route, setClientOrigin, setDestination }}>{children}</Context.Provider>
+  return <Context.Provider value={{ route, setClientOrigin, setDestination, selectDriver }}>{children}</Context.Provider>
 }
 
 export default Context

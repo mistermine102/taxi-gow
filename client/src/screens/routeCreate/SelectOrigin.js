@@ -5,13 +5,14 @@ import Map from '../../components/Map'
 import { useContext } from 'react'
 import RouteContext from '../../context/Route'
 
-const SelectOrigin = ({navigation}) => {
+const SelectOrigin = ({ navigation }) => {
   const { setClientOrigin, route } = useContext(RouteContext)
   const { clientOrigin: origin } = route
 
   const onPlaceSelect = (data, details) => {
     const { lat, lng } = details.geometry.location
-    setClientOrigin({ latitude: lat, longitude: lng })
+    console.log(details.formatted_address);
+    setClientOrigin({ coords: { latitude: lat, longitude: lng }, address: details.formatted_address })
   }
 
   return (
@@ -23,7 +24,7 @@ const SelectOrigin = ({navigation}) => {
 
       {origin ? (
         <View className="mt-8">
-          <Map directions={{ origin }} />
+          <Map directions={{ origin: origin.coords }} />
           <View className="mt-4 px-8">
             <BaseButton title="Kontynuuj" onPress={() => navigation.navigate('SelectDestination')} />
           </View>
