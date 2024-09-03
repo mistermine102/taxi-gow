@@ -7,18 +7,23 @@ const parseCoords = require('../utils/parseCoords')
 const calculateTotalCost = require('../utils/calculateTotalCost')
 
 exports.createRoute = async (req, res) => {
-  //1. server gets origin, destination and driverId from client
-  //2. server calculates route's price based on those 3 pieces of information
+  //1. server gets origin, destination and driverId from client (done)
+  //2. server calculates route's price based on those 3 pieces of information (done)
   //3. server creates payment and sends payment id to the client
   //4. when payment with that id get's paid, server creates a route
 
+  //check if user which is trying to create a route doesn't have an active route
+  const foundRoute = await Route.findOne({ clientId: req.user._id })
+  if(foundRoute) throw new AppError("This user has an active route", 400)
+
+  //extract and parse data from request
   const { clientOrigin, destination, driverId } = req.body
 
   const [clientLatitude, clientLongitude] = parseCoords(clientOrigin)
   const [destinationLatitude, destinationLongitude] = parseCoords(destination)
 
-  //check if driver with that id exists
-  const foundDriver = await User.findOne({ _id: driverId, role: 'driver' })
+  //check if driver with that id exists and is free
+  const foundDriver = await User.findById(driverId)
   if (!foundDriver) throw new AppError('Cannot find driver with that id', 400)
 
   const { latitude: driverLatitude, longitude: driverLongitude } = foundDriver.currentLocation.coords
