@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const User = mongoose.model('User')
 const calculateDistances = require('../utils/calculateDistances')
+const calculateTotalCost = require("../utils/calculateTotalCost")
 
 exports.getDrivers = async (req, res) => {
   //receive information about client's origin
@@ -33,7 +34,7 @@ exports.getDrivers = async (req, res) => {
     //calculate drivers cost
     //(total distance is in meters, we convert it to km)
     const totalDistance = parseFloat(((row.distance.value + routeDistance.value) / 1000).toFixed(1))
-    const totalCost = parseFloat((totalDistance * driver.pricing.perKm + driver.pricing.initialCost).toFixed(2))
+    const totalCost = calculateTotalCost(driver.pricing, totalDistance)
 
     tranformedDrivers.push({
       _id: driver._id,

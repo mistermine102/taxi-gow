@@ -2,16 +2,31 @@ import { Text, View } from 'react-native'
 import PlacesInput from '../../components/PlacesInput'
 import BaseButton from '../../components/base/BaseButton'
 import Map from '../../components/Map'
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 import RouteContext from '../../context/Route'
+import appApi from '../../api/appApi'
+import { useFocusEffect } from '@react-navigation/native'
 
 const SelectOrigin = ({ navigation }) => {
   const { setClientOrigin, route } = useContext(RouteContext)
   const { clientOrigin: origin } = route
 
+  useFocusEffect(() => {
+    const getRoute = async () => {
+      //check if logged in user isn't in an active route
+      //if he is, then navigate him to tracking a driver
+      const response = await appApi.get('/users/route')
+
+      if (response.data.route) {
+        navigation.navigate('DriverTrack')
+      }
+    }
+    getRoute()
+  })
+
   const onPlaceSelect = (data, details) => {
     const { lat, lng } = details.geometry.location
-    console.log(details.formatted_address);
+    console.log(details.formatted_address)
     setClientOrigin({ coords: { latitude: lat, longitude: lng }, address: details.formatted_address })
   }
 

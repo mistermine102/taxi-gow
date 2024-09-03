@@ -3,11 +3,7 @@ const mongoose = require('mongoose')
 const locationSchema = new mongoose.Schema({
   latitude: Number,
   longitude: Number,
-  address: {
-    city: String,
-    street: String,
-    postalCode: String,
-  },
+  address: String,
 })
 
 const schema = new mongoose.Schema({
@@ -24,8 +20,8 @@ const schema = new mongoose.Schema({
   driverOrigin: locationSchema,
   destination: locationSchema,
   waypoints: [locationSchema],
-  totalLength: Number,
-  totalPrice: Number,
+  totalDistance: Number,
+  totalCost: Number,
   statusId: {
     type: Number,
     required: true,
@@ -41,6 +37,9 @@ const schema = new mongoose.Schema({
     estimated: Number,
     actual: Number,
   },
+  startedAt: Date,
+  clientPickedUpAt: Date,
+  finishedAt: Date,
 })
 
 mongoose.model('Route', schema)

@@ -28,6 +28,15 @@ const reducer = (state, { type, payload }) => {
           driver: payload,
         },
       }
+    case 'clear_route':
+      return {
+        ...state,
+        route: {
+          clientOrigin: null,
+          driver: null,
+          destination: null,
+        },
+      }
     default:
       return state
   }
@@ -54,7 +63,11 @@ export const Provider = ({ children }) => {
     dispatch({ type: 'set_destination', payload: destination })
   }
 
-  return <Context.Provider value={{ route, setClientOrigin, setDestination, selectDriver }}>{children}</Context.Provider>
+  const clearRoute = () => {
+    dispatch({ type: 'clear_route' })
+  }
+
+  return <Context.Provider value={{ route, setClientOrigin, setDestination, selectDriver, clearRoute }}>{children}</Context.Provider>
 }
 
 export default Context

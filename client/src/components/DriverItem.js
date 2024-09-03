@@ -17,7 +17,7 @@ const driverItem = ({ driver, isSelected = false }) => {
       </View>
       <View className="flex-row items-center gap-1">
         <MaterialCommunityIcons name="clock-time-four-outline" size={26} color="#4d4d4d" />
-        <Text className="text-darkGray text-[16px]">{driver.duration.text.slice(0, driver.duration.text.length - 1)}</Text>
+        <Text className="text-darkGray text-[16px]">{driver.duration.text}</Text>
       </View>
     </View>
   )

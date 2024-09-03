@@ -20,6 +20,8 @@ import RouteSummaryScreen from './src/screens/routeCreate/Summary'
 import DriverTrackScreen from './src/screens/DriverTrack'
 import AccountScreen from './src/screens/Account'
 
+import SuccessScreen from './src/screens/Success'
+
 import { navigationRef } from './src/RootNavigation'
 
 //tamagui
@@ -53,7 +55,7 @@ const AuthStackNavigator = () => {
 
 const MainTabNavigator = () => {
   return (
-    <Tab.Navigator>
+    <Tab.Navigator initialRouteName="RouteCreateStack">
       <Tab.Screen name="DriverTrack" component={DriverTrackScreen} />
       <Tab.Screen options={{ headerShown: false }} name="RouteCreateStack" component={RouteCreateNavigator} />
       <Tab.Screen options={{ headerTitle: 'Konto', tabBarLabel: 'Konto' }} name="Account" component={AccountScreen} />
@@ -68,6 +70,7 @@ const App = () => {
         <Stack.Screen options={{ headerShown: false }} name="ResolveAuth" component={ResolveAuthScreen} />
         <Stack.Screen options={{ headerShown: false }} name="AuthStack" component={AuthStackNavigator} />
         <Stack.Screen options={{ headerShown: false }} name="MainTab" component={MainTabNavigator} />
+        <Stack.Screen options={{ headerShown: false }} name="Success" component={SuccessScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   )
