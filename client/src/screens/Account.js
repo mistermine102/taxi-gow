@@ -1,7 +1,7 @@
 import { View, Text } from 'react-native'
 import { useContext } from 'react'
 import AuthContext from '../context/Auth'
-import BaseButton from '../components/base/BaseButton'
+import { BaseButton } from '../components/base/base'
 
 const AccountScreen = () => {
   const { user, signout } = useContext(AuthContext)

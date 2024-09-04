@@ -1,9 +1,9 @@
 import { Text, View } from 'react-native'
-import BaseButton from '../../components/base/BaseButton'
 import { useContext, useState } from 'react'
 import RouteContext from '../../context/Route'
 import appApi from '../../api/appApi'
 import { CommonActions } from '@react-navigation/native'
+import { ScreenWrapper, BaseButton, BaseTitle } from '../../components/base/base'
 
 const Summary = ({ navigation }) => {
   const { route, clearRoute } = useContext(RouteContext)
@@ -43,8 +43,10 @@ const Summary = ({ navigation }) => {
   if (isRouteCreated) return null
 
   return (
-    <View className="flex-1 bg-white px-base">
-      <Text className="text-2xl text-darkGray font-semibold text-center mt-16">Podsumowanie</Text>
+    <ScreenWrapper>
+      <View className="mt-16">
+        <BaseTitle>Podsumowanie</BaseTitle>
+      </View>
       <View className="my-4 bg-lightGray rounded-md p-2">
         <Text className="text-darkGray mb-1">Punkt startowy: {route.clientOrigin.address}</Text>
         <Text className="text-darkGray mb-1">Punkt końcowy: {route.destination.address}</Text>
@@ -55,7 +57,7 @@ const Summary = ({ navigation }) => {
         <Text className="text-darkGray mb-1">Czas podróży:</Text>
       </View>
       <BaseButton title="Zapłać" onPress={createRoute} />
-    </View>
+    </ScreenWrapper>
   )
 }
 export default Summary

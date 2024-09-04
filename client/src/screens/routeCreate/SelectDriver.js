@@ -3,7 +3,7 @@ import appApi from '../../api/appApi'
 import { useEffect, useContext, useState } from 'react'
 import RouteContext from '../../context/Route'
 import DriverItem from '../../components/DriverItem'
-import BaseButton from '../../components/base/BaseButton'
+import { ScreenWrapper, BaseButton, BaseTitle } from '../../components/base/base'
 
 const SelectDriver = ({ navigation }) => {
   const { route, selectDriver } = useContext(RouteContext)
@@ -26,8 +26,10 @@ const SelectDriver = ({ navigation }) => {
   }, [])
 
   return (
-    <View className="flex-1 bg-white px-base">
-      <Text className="text-2xl text-darkGray font-semibold text-center mt-16">Wybierz kierowcę</Text>
+    <ScreenWrapper>
+      <View className="mt-16">
+        <BaseTitle>Wybierz kierowcę</BaseTitle>
+      </View>
       <View className="my-4 flex-1">
         <FlatList
           contentContainerStyle={{ gap: 16 }}
@@ -41,7 +43,7 @@ const SelectDriver = ({ navigation }) => {
         />
       </View>
       {route.driver ? <BaseButton title="Kontynuuj" onPress={() => navigation.navigate('Summary')} /> : null}
-    </View>
+    </ScreenWrapper>
   )
 }
 export default SelectDriver

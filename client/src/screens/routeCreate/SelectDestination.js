@@ -1,9 +1,9 @@
 import { View, Text } from 'react-native'
 import PlacesInput from '../../components/PlacesInput'
-import BaseButton from '../../components/base/BaseButton'
 import Map from '../../components/Map'
 import { useContext } from 'react'
 import RouteContext from '../../context/Route'
+import { ScreenWrapper, BaseButton, BaseTitle } from '../../components/base/base'
 
 const SelectDestination = ({ navigation }) => {
   const { route, setDestination } = useContext(RouteContext)
@@ -15,8 +15,10 @@ const SelectDestination = ({ navigation }) => {
   }
 
   return (
-    <View className="flex-1 bg-white px-base">
-      <Text className="text-2xl text-darkGray font-semibold text-center mt-16">Dokąd chcesz dojechać?</Text>
+    <ScreenWrapper>
+      <View className="mt-16">
+        <BaseTitle>Dokąd chcesz dojechać?</BaseTitle>
+      </View>
       <View className="mt-4">
         <PlacesInput placeholder="Wpisz nazwę ulicy" onPlaceSelect={onPlaceSelect} />
       </View>
@@ -34,7 +36,7 @@ const SelectDestination = ({ navigation }) => {
           </View>
         </View>
       ) : null}
-    </View>
+    </ScreenWrapper>
   )
 }
 export default SelectDestination

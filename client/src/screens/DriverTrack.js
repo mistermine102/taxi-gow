@@ -1,10 +1,11 @@
-import { View, Text } from 'react-native'
+import { Text } from 'react-native'
+import { ScreenWrapper } from '../components/base/base'
 
 const DriverTrackScreen = () => {
   return (
-    <View>
+    <ScreenWrapper>
       <Text>DriverTrack</Text>
-    </View>
+    </ScreenWrapper>
   )
 }
 

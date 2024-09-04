@@ -1,11 +1,11 @@
 import { Text, View } from 'react-native'
 import PlacesInput from '../../components/PlacesInput'
-import BaseButton from '../../components/base/BaseButton'
 import Map from '../../components/Map'
-import { useContext, useEffect } from 'react'
+import { useContext } from 'react'
 import RouteContext from '../../context/Route'
 import appApi from '../../api/appApi'
 import { useFocusEffect } from '@react-navigation/native'
+import { ScreenWrapper, BaseButton, BaseTitle } from '../../components/base/base'
 
 const SelectOrigin = ({ navigation }) => {
   const { setClientOrigin, route } = useContext(RouteContext)
@@ -31,8 +31,10 @@ const SelectOrigin = ({ navigation }) => {
   }
 
   return (
-    <View className="flex-1 bg-white px-base">
-      <Text className="text-2xl text-darkGray font-semibold text-center mt-16">Skąd mamy cię odebrać?</Text>
+    <ScreenWrapper>
+      <View className="mt-16">
+        <BaseTitle>Skąd mamy cię odebrać?</BaseTitle>
+      </View>
       <View className="mt-4">
         <PlacesInput placeholder="Wpisz nazwę ulicy" onPlaceSelect={onPlaceSelect} />
       </View>
@@ -45,7 +47,7 @@ const SelectOrigin = ({ navigation }) => {
           </View>
         </View>
       ) : null}
-    </View>
+    </ScreenWrapper>
   )
 }
 
