@@ -1,9 +1,9 @@
 import { Text, View } from 'react-native'
 import { useContext, useState } from 'react'
-import RouteContext from '../../context/Route'
-import appApi from '../../api/appApi'
+import RouteContext from '../../../context/Route'
+import appApi from '../../../api/appApi'
 import { CommonActions } from '@react-navigation/native'
-import { ScreenWrapper, BaseButton, BaseTitle } from '../../components/base/base'
+import { ScreenWrapper, BaseButton, BaseTitle } from '../../../components/base/base'
 
 const Summary = ({ navigation }) => {
   const { route, clearRoute } = useContext(RouteContext)

@@ -1,11 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import axios from 'axios'
 
-const instance = axios.create({
-  baseURL: 'https://3c41-109-173-196-137.ngrok-free.app',
+const appApi = axios.create({
+  baseURL: 'https://ae0d-109-173-196-137.ngrok-free.app',
 })
 
-instance.interceptors.request.use(
+appApi.interceptors.request.use(
   async config => {
     const token = await AsyncStorage.getItem('token')
     if (!token) return config
@@ -15,4 +15,4 @@ instance.interceptors.request.use(
   err => Promise.reject(err)
 )
 
-export default instance
+export default appApi

@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const { isAuthenticated } = require('../middleware/auth')
-const { createRoute } = require('../controllers/route')
+const { createRoute, changeRouteStatus } = require('../controllers/route')
 const tryCatch = require('../utils/tryCatch')
 const { body } = require('express-validator')
 const validate = require('../middleware/validate')
@@ -18,7 +18,10 @@ const createRouteValidators = [
       return true
     }),
 ]
+const changeRoutesStatusValidators = [body('newStatusId').notEmpty().isInt({ min: 1, max: 5 })]
 
 router.post('/', isAuthenticated, createRouteValidators, validate, tryCatch(createRoute))
+
+router.patch('/:routeId', isAuthenticated, changeRoutesStatusValidators, validate, tryCatch(changeRouteStatus))
 
 module.exports = router

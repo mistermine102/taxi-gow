@@ -1,9 +1,13 @@
 import { TouchableOpacity, Text, View } from 'react-native'
 import { TextInput } from 'react-native'
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons'
 
-export const BaseButton = ({ title = 'Przycisk', onPress = () => {} }) => {
+export const BaseButton = ({ alt = false, title = 'Przycisk', onPress = () => {} }) => {
   return (
-    <TouchableOpacity className="bg-primary items-center rounded-md py-3 mb-2" onPress={onPress}>
+    <TouchableOpacity
+      className={alt ? 'bg-transparent border border-darkGray items-center rounded-md py-3 mb-2' : 'bg-primary border border-primary items-center rounded-md py-3 mb-2'}
+      onPress={onPress}
+    >
       <Text className="text-[16px] font-semibold text-darkGray">{title}</Text>
     </TouchableOpacity>
   )
@@ -17,7 +21,7 @@ export const BaseInput = ({ value = '', secureTextEntry = false, autoCapitalize 
       autoCapitalize={autoCapitalize}
       onChangeText={onChangeText}
       placeholder={placeholder}
-      className="text-[16px] rounded-lg mb-4 bg-lightGray px-6 py-3"
+      className="text-[16px] rounded-md mb-4 bg-lightGray px-6 py-3"
     />
   )
 }
@@ -32,6 +36,10 @@ export const BaseLink = ({ onPress = () => {}, title = 'Link' }) => {
 
 export const BaseTitle = ({ children }) => {
   return <Text className="text-2xl text-darkGray font-semibold text-center">{children}</Text>
+}
+
+export const BaseIcon = ({ name, size = 24, color = '#4d4d4d' }) => {
+  return <MaterialCommunityIcons name={name} size={size} color={color} />
 }
 
 export const ScreenWrapper = ({ children }) => {

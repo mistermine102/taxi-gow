@@ -1,11 +1,11 @@
 import { Text, View } from 'react-native'
-import PlacesInput from '../../components/PlacesInput'
-import Map from '../../components/Map'
+import PlacesInput from '../../../components/PlacesInput'
+import Map from '../../../components/Map'
 import { useContext } from 'react'
-import RouteContext from '../../context/Route'
-import appApi from '../../api/appApi'
+import RouteContext from '../../../context/Route'
+import appApi from '../../../api/appApi'
 import { useFocusEffect } from '@react-navigation/native'
-import { ScreenWrapper, BaseButton, BaseTitle } from '../../components/base/base'
+import { ScreenWrapper, BaseButton, BaseTitle } from '../../../components/base/base'
 
 const SelectOrigin = ({ navigation }) => {
   const { setClientOrigin, route } = useContext(RouteContext)
@@ -18,7 +18,7 @@ const SelectOrigin = ({ navigation }) => {
       const response = await appApi.get('/users/route')
 
       if (response.data.route) {
-        navigation.navigate('DriverTrack')
+        navigation.navigate('TrackDriver')
       }
     }
     getRoute()

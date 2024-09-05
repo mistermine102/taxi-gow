@@ -37,9 +37,14 @@ const schema = new mongoose.Schema({
     estimated: Number,
     actual: Number,
   },
-  startedAt: Date,
-  clientPickedUpAt: Date,
-  finishedAt: Date,
+  meta: {
+    createdAt: Date,
+    startedAt: Date,
+    clientPickedUpAt: Date,
+    clientDroppedOffAt: Date,
+    finishedAt: Date,
+  },
 })
 
 mongoose.model('Route', schema)
+mongoose.model('ArchivedRoute', schema)

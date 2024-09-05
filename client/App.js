@@ -11,19 +11,19 @@ import { Provider as RouteProvider } from './src/context/Route'
 import SignupScreen from './src/screens/auth/Signup'
 import SigninScreen from './src/screens/auth/Signin'
 import ResolveAuthScreen from './src/screens/auth/ResolveAuth'
-
-import SelectRouteOriginScreen from './src/screens/routeCreate/SelectOrigin'
-import SelectRouteDestinationScreen from './src/screens/routeCreate/SelectDestination'
-import SelectRouteDriverScreen from './src/screens/routeCreate/SelectDriver'
-import RouteSummaryScreen from './src/screens/routeCreate/Summary'
-
-import DriverTrackScreen from './src/screens/DriverTrack'
+import SelectRouteOriginScreen from './src/screens/client/routeCreate/SelectOrigin'
+import SelectRouteDestinationScreen from './src/screens/client/routeCreate/SelectDestination'
+import SelectRouteDriverScreen from './src/screens/client/routeCreate/SelectDriver'
+import RouteSummaryScreen from './src/screens/client/routeCreate/Summary'
+import TrackDriverScreen from './src/screens/client/TrackDriver'
+import DriverRoutesScreen from './src/screens/driver/DriverRoutes'
 import AccountScreen from './src/screens/Account'
-
 import SuccessScreen from './src/screens/Success'
 
 import { navigationRef } from './src/RootNavigation'
 
+import AuthContext from './src/context/Auth'
+import { useContext } from 'react'
 //tamagui
 import { TamaguiProvider, createTamagui } from 'tamagui'
 import { config } from '@tamagui/config/v3'
@@ -54,10 +54,20 @@ const AuthStackNavigator = () => {
 }
 
 const MainTabNavigator = () => {
+  const { user } = useContext(AuthContext)
+
+  if (!user) return null
+
   return (
     <Tab.Navigator initialRouteName="RouteCreateStack">
-      <Tab.Screen name="DriverTrack" component={DriverTrackScreen} />
-      <Tab.Screen options={{ headerShown: false }} name="RouteCreateStack" component={RouteCreateNavigator} />
+      {user.role === 'client' ? (
+        <>
+          <Tab.Screen name="TrackDriver" component={TrackDriverScreen} />
+          <Tab.Screen options={{ headerShown: false }} name="RouteCreateStack" component={RouteCreateNavigator} />
+        </>
+      ) : (
+        <Tab.Screen name="DriverRoutes" component={DriverRoutesScreen} />
+      )}
       <Tab.Screen options={{ headerTitle: 'Konto', tabBarLabel: 'Konto' }} name="Account" component={AccountScreen} />
     </Tab.Navigator>
   )

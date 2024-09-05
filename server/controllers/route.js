@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const Route = mongoose.model('Route')
+const ArchivedRoute = mongoose.model('ArchivedRoute')
 const User = mongoose.model('User')
 const calculateDistances = require('../utils/calculateDistances')
 const AppError = require('../classes/AppError')
@@ -14,7 +15,7 @@ exports.createRoute = async (req, res) => {
 
   //check if user which is trying to create a route doesn't have an active route
   const foundRoute = await Route.findOne({ clientId: req.user._id })
-  if(foundRoute) throw new AppError("This user has an active route", 400)
+  if (foundRoute) throw new AppError('This user has an active route', 400)
 
   //extract and parse data from request
   const { clientOrigin, destination, driverId } = req.body
@@ -76,12 +77,72 @@ exports.createRoute = async (req, res) => {
       estimated: totalMinutes,
       actual: null,
     },
-    startedAt: new Date(),
-    clientPickedUpAt: null,
-    finishedAt: null,
+    meta: {
+      createdAt: new Date(),
+      startedAt: null,
+      clientPickedUpAt: null,
+      clientDroppedOffAt: null,
+      finishedAt: null,
+    },
   })
 
   await newRoute.save()
 
-  res.json(newRoute)
+  res.json({ route: newRoute })
+}
+
+exports.changeRouteStatus = async (req, res) => {
+  const { routeId } = req.params
+  const { newStatusId } = req.body
+
+  const route = await Route.findById(routeId)
+
+  //check if user is the driver of the route
+  if (!route.driverId.equals(req.user._id)) throw new AppError("Can't modify this route", 401)
+
+  switch (newStatusId) {
+    case 1:
+      //route when created has a statusId === 1
+      break
+    case 2:
+      //route started
+      route.meta.startedAt = new Date()
+      route.statusId = 2
+      break
+    case 3:
+      //client picked up
+      route.statusId = 3
+      route.meta.clientPickedUpAt = new Date()
+      break
+    case 4:
+      //client dropped off
+      route.statusId = 4
+      route.meta.clientDroppedOffAt = new Date()
+      break
+    case 5:
+      //route finished
+      route.statusId = 5
+      route.meta.finishedAt = new Date()
+
+      //caclulate actual route duration
+      //finishedAt - startedAt
+      const actualDurationInMiliseconds = Math.abs(route.meta.finishedAt - route.meta.startedAt)
+      const actualDurationInMinutes = Math.ceil(actualDurationInMiliseconds / 1000 / 60)
+      route.duration.actual = parseInt(actualDurationInMinutes)
+
+      //push the route to the archives
+      const archivedRoute = new ArchivedRoute({
+        ...route._doc,
+      })
+
+      await archivedRoute.save()
+
+      break
+    default:
+      break
+  }
+
+  newStatusId === 5 ? await route.deleteOne() : await route.save()
+
+  res.json({ route })
 }

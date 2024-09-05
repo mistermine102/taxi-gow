@@ -1,9 +1,9 @@
-import { View, Text } from 'react-native'
-import PlacesInput from '../../components/PlacesInput'
-import Map from '../../components/Map'
+import { View } from 'react-native'
+import PlacesInput from '../../../components/PlacesInput'
+import Map from '../../../components/Map'
 import { useContext } from 'react'
-import RouteContext from '../../context/Route'
-import { ScreenWrapper, BaseButton, BaseTitle } from '../../components/base/base'
+import RouteContext from '../../../context/Route'
+import { ScreenWrapper, BaseButton, BaseTitle } from '../../../components/base/base'
 
 const SelectDestination = ({ navigation }) => {
   const { route, setDestination } = useContext(RouteContext)
