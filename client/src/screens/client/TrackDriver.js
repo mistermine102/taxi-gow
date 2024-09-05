@@ -3,11 +3,15 @@ import { ScreenWrapper, BaseTitle } from '../../components/base/base'
 import { View } from 'react-native'
 import appApi from '../../api/appApi'
 import RouteItem from '../../components/RouteItem'
+import { useIsFocused } from '@react-navigation/native'
 
 const DriverTrackScreen = () => {
   const [route, setRoute] = useState()
+  const isFocused = useIsFocused()
 
   useEffect(() => {
+    if (!isFocused) return
+    
     const getRoute = async () => {
       try {
         const response = await appApi.get('/users/route')
@@ -17,7 +21,7 @@ const DriverTrackScreen = () => {
       }
     }
     getRoute()
-  }, [])
+  }, [isFocused])
 
   if (!route) return null
 

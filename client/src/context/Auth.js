@@ -88,6 +88,7 @@ export const Provider = ({ children }) => {
       navigate('MainTab')
     } catch (err) {
       //handle error
+      console.log('cannot sign in')
       console.log(err)
     }
   }

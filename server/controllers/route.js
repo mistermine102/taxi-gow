@@ -95,6 +95,8 @@ exports.changeRouteStatus = async (req, res) => {
   const { routeId } = req.params
   const { newStatusId } = req.body
 
+  console.log("Changing route's status", newStatusId)
+
   const route = await Route.findById(routeId)
 
   //check if user is the driver of the route

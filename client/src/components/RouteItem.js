@@ -1,7 +1,7 @@
 import { View, Text } from 'react-native'
-import { BaseIcon, BaseButton } from './base/base'
+import { BaseIcon } from './base/base'
 
-const RouteItem = ({ userType, name, status, destination, origin }) => {
+const RouteItem = ({ children, name, status, destination, origin }) => {
   return (
     <View className="bg-lightGray rounded-md p-4">
       <View className="flex-row items-center justify-between mb-2">
@@ -18,14 +18,8 @@ const RouteItem = ({ userType, name, status, destination, origin }) => {
         <BaseIcon name="crosshairs-gps" />
         <Text className="text-darkGray text-lg">{`${destination.slice(0, 25)}${destination.length > 25 ? '...' : ''}`}</Text>
       </View>
-      {userType === 'client' ? (
-        <BaseButton title="Śledź kierowcę" />
-      ) : (
-        <>
-          <BaseButton title="Rozpocznij" />
-          <BaseButton alt title="Zobacz na mapie" />
-        </>
-      )}
+      {/* controls */}
+      <View>{children}</View>
     </View>
   )
 }

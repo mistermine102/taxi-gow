@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { requestForegroundPermissionsAsync, getCurrentPositionAsync, Accuracy } from 'expo-location'
 
 export default () => {
@@ -19,6 +19,6 @@ export default () => {
   return {
     location,
     getCurrentLocation,
-    errorMsg
+    errorMsg,
   }
 }
