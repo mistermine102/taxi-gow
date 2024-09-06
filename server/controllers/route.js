@@ -26,6 +26,7 @@ exports.createRoute = async (req, res) => {
   //check if driver with that id exists and is free
   const foundDriver = await User.findById(driverId)
   if (!foundDriver) throw new AppError('Cannot find driver with that id', 400)
+  if (!foundDriver.isAvailable) throw new AppError('Driver not available', 400)
 
   const { latitude: driverLatitude, longitude: driverLongitude } = foundDriver.currentLocation.coords
   const driverOrigin = `${driverLatitude}, ${driverLongitude}`
@@ -88,14 +89,16 @@ exports.createRoute = async (req, res) => {
 
   await newRoute.save()
 
+  //change driver's isAvailable
+  foundDriver.isAvailable = false
+  await foundDriver.save()
+
   res.json({ route: newRoute })
 }
 
 exports.changeRouteStatus = async (req, res) => {
   const { routeId } = req.params
   const { newStatusId } = req.body
-
-  console.log("Changing route's status", newStatusId)
 
   const route = await Route.findById(routeId)
 
@@ -138,6 +141,9 @@ exports.changeRouteStatus = async (req, res) => {
       })
 
       await archivedRoute.save()
+
+      //change driver's isAvailable
+      await User.findByIdAndUpdate(route.driverId, { isAvailable: true })
 
       break
     default:

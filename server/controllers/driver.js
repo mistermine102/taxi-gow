@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const User = mongoose.model('User')
 const calculateDistances = require('../utils/calculateDistances')
-const calculateTotalCost = require("../utils/calculateTotalCost")
+const calculateTotalCost = require('../utils/calculateTotalCost')
 
 exports.getDrivers = async (req, res) => {
   //receive information about client's origin
@@ -12,7 +12,7 @@ exports.getDrivers = async (req, res) => {
   const { distance: routeDistance, duration: routeDuration } = routeDistanceData.rows[0].elements[0]
 
   //get drivers
-  const drivers = await User.find({ role: 'driver' })
+  const drivers = await User.find({ role: 'driver', isAvailable: true })
 
   //calculate distance and travel time for each driver
   const origins = []
@@ -61,5 +61,3 @@ exports.getDrivers = async (req, res) => {
     },
   })
 }
-
-

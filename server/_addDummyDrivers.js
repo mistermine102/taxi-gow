@@ -74,6 +74,7 @@ const addDummyDrivers = async (req, res) => {
       email: `driver${i + 1}@gmail.com`,
       password,
       role: 'driver',
+      isAvailable: true,
       pricing: dummyPrices[i],
       currentLocation: {
         timestamp: 10000,

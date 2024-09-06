@@ -19,6 +19,7 @@ exports.verifyToken = async (req, res, next) => {
 
     const { userId } = jwt.verify(token, process.env.JWT_SECRET)
     const user = await User.findById(userId)
+    if (!user) return next()
 
     req.user = user
     req.isAuthenticated = true
@@ -30,7 +31,7 @@ exports.verifyToken = async (req, res, next) => {
 }
 
 exports.isAuthenticated = (req, res, next) => {
-  if(!req.isAuthenticated) {
+  if (!req.isAuthenticated) {
     throw new AppError('Not authenticated', 401)
   }
   next()
