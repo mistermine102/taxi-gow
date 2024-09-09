@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { requestForegroundPermissionsAsync, getCurrentPositionAsync, Accuracy } from 'expo-location'
 
 export default () => {
@@ -12,13 +12,17 @@ export default () => {
       setErrorMsg('Permission to access location was denied')
       return
     }
-    let location = await getCurrentPositionAsync({ accuracy: Accuracy.Lowest })
-    setLocation(location)
+
+    let loc = await getCurrentPositionAsync({ accuracy: Accuracy.Lowest })
+    setLocation(loc)
   }
+
+  useEffect(() => {
+    getCurrentLocation()
+  }, [])
 
   return {
     location,
-    getCurrentLocation,
     errorMsg,
   }
 }
