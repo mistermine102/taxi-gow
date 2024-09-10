@@ -1,17 +1,19 @@
 import { useEffect, useState } from 'react'
-import { ScreenWrapper, BaseTitle } from '../../components/base/base'
+import { ScreenWrapper, BaseTitle, BaseButton } from '../../components/base/base'
 import { View } from 'react-native'
 import appApi from '../../api/appApi'
 import RouteItem from '../../components/RouteItem'
 import { useIsFocused } from '@react-navigation/native'
+import MapModal from '../../components/modals/MapModal'
 
 const DriverTrackScreen = () => {
-  const [route, setRoute] = useState()
   const isFocused = useIsFocused()
+  const [route, setRoute] = useState()
+  const [isModalVisible, setIsModalVisible] = useState(false)
 
   useEffect(() => {
     if (!isFocused) return
-    
+
     const getRoute = async () => {
       try {
         const response = await appApi.get('/users/route')
@@ -27,6 +29,13 @@ const DriverTrackScreen = () => {
 
   return (
     <ScreenWrapper>
+      <MapModal
+        isVisible={isModalVisible}
+        onClose={() => setIsModalVisible(false)}
+        onBtnPress={() => setIsModalVisible(false)}
+        btnCaption="Wróć"
+        title="Śledź kierowcę"
+      />
       <View className="mt-16 mb-4">
         <BaseTitle>Trasy</BaseTitle>
       </View>
@@ -36,7 +45,9 @@ const DriverTrackScreen = () => {
         status={route.statusId}
         origin={route.clientOrigin.address}
         destination={route.destination.address}
-      />
+      >
+        <BaseButton title="Śledź kierowcę" onPress={() => setIsModalVisible(true)} />
+      </RouteItem>
     </ScreenWrapper>
   )
 }

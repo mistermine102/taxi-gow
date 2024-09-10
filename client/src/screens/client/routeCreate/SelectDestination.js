@@ -26,9 +26,9 @@ const SelectDestination = ({ navigation }) => {
       {origin ? (
         <View className="mt-8">
           {destination ? (
-            <Map directions={{ origin: origin.coords, destination: destination.coords }} />
+            <Map rounded directions={{ origin: origin.coords, destination: destination.coords }} />
           ) : (
-            <Map directions={{ origin: origin.coords }} />
+            <Map rounded directions={{ origin: origin.coords }} />
           )}
 
           <View className="mt-4 px-8">

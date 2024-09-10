@@ -43,7 +43,7 @@ const SelectOrigin = ({ navigation }) => {
 
       {origin ? (
         <View className="mt-8">
-          <Map directions={{ origin: origin.coords }} />
+          <Map rounded directions={{ origin: origin.coords }} />
           <View className="mt-4 px-8">
             <BaseButton title="Kontynuuj" onPress={() => navigation.navigate('SelectDestination')} />
           </View>

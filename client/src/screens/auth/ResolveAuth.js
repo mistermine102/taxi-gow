@@ -1,17 +1,14 @@
 import { useEffect, useContext } from 'react'
 import AuthContext from '../../context/Auth'
-import TMExample from '../../components/__TMExample'
 
 const ResolveAuth = () => {
-  // const { tryLocalSignin } = useContext(AuthContext)
+  const { tryLocalSignin } = useContext(AuthContext)
 
-  // useEffect(() => {
-  //   tryLocalSignin()
-  // }, [])
+  useEffect(() => {
+    tryLocalSignin()
+  }, [])
 
-  // return null
-
-  return <TMExample/>
+  return null
 }
 
 export default ResolveAuth
