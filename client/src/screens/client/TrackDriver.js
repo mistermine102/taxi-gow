@@ -10,6 +10,18 @@ const DriverTrackScreen = () => {
   const isFocused = useIsFocused()
   const [route, setRoute] = useState()
   const [isModalVisible, setIsModalVisible] = useState(false)
+  const [driverLocation, setDriverLocation] = useState()
+
+  const openModal = async () => {
+    try {
+      setIsModalVisible(true)
+      
+      const response = await appApi.get('/users/route/driver/location')
+      setDriverLocation(response.data.coords)
+    } catch (err) {
+      console.log(err)
+    }
+  }
 
   useEffect(() => {
     if (!isFocused) return
@@ -33,6 +45,12 @@ const DriverTrackScreen = () => {
         isVisible={isModalVisible}
         onClose={() => setIsModalVisible(false)}
         onBtnPress={() => setIsModalVisible(false)}
+        markers={driverLocation ? [{ coords: driverLocation, id: 'driverLocation' }] : []}
+        region={
+          driverLocation
+            ? { latitude: driverLocation.latitude, longitude: driverLocation.longitude, latitudeDelta: 0.01, longitudeDelta: 0.01 }
+            : null
+        }
         btnCaption="Wróć"
         title="Śledź kierowcę"
       />
@@ -46,7 +64,7 @@ const DriverTrackScreen = () => {
         origin={route.clientOrigin.address}
         destination={route.destination.address}
       >
-        <BaseButton title="Śledź kierowcę" onPress={() => setIsModalVisible(true)} />
+        <BaseButton title="Śledź kierowcę" onPress={openModal} />
       </RouteItem>
     </ScreenWrapper>
   )

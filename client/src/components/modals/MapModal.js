@@ -3,7 +3,16 @@ import { View, Text, StyleSheet } from 'react-native'
 import { BaseButton } from '../base/base'
 import Map from '../Map'
 
-const MapModal = ({ isVisible = false, onBtnPress = () => {}, btnCaption, title = 'Modal', onClose = () => {}, markers = [], directions = {} }) => {
+const MapModal = ({
+  isVisible = false,
+  onBtnPress = () => {},
+  btnCaption,
+  title = 'Modal',
+  onClose = () => {},
+  markers = [],
+  directions = {},
+  region = {},
+}) => {
   return (
     <EmptyModal isVisible={isVisible} onClose={onClose}>
       <View style={styles.modalView} className="bg-white mx-2 my-8 flex-1 rounded-3xl items-center">
@@ -11,7 +20,7 @@ const MapModal = ({ isVisible = false, onBtnPress = () => {}, btnCaption, title 
           <Text className="text-xl font-semibold text-darkGray">{title}</Text>
         </View>
         <View className="flex-1 w-full">
-          <Map markers={markers} directions={directions} height="100%" />
+          <Map region={region} markers={markers} directions={directions} height="100%" />
         </View>
         <View className="w-full p-4">
           <BaseButton title={btnCaption} onPress={onBtnPress} />

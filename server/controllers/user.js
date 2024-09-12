@@ -6,3 +6,11 @@ exports.getRoute = async (req, res) => {
 
   res.json({ route })
 }
+
+exports.getRouteDriverLocation = async (req, res) => {
+  const route = await Route.findOne({ clientId: req.user._id }).populate('driverId')
+
+  const { latitude, longitude } = route.driverId.currentLocation.coords
+
+  res.json({coords: { latitude, longitude }})
+}

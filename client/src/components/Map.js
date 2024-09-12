@@ -2,7 +2,7 @@ import MapView, { Marker } from 'react-native-maps'
 import MapViewDirections from 'react-native-maps-directions'
 import { useEffect, useRef } from 'react'
 
-const Map = ({ directions = {}, markers = [], height = 300, rounded = false }) => {
+const Map = ({ directions = {}, markers = [], height = 300, rounded = false, region = {} }) => {
   const { origin, destination } = directions
   const mapRef = useRef()
 
@@ -11,9 +11,9 @@ const Map = ({ directions = {}, markers = [], height = 300, rounded = false }) =
   }, [origin, destination])
 
   return (
-    <MapView ref={mapRef} style={[{ borderRadius: rounded ? 8 : 0 }, { height }]}>
+    <MapView region={region} ref={mapRef} style={[{ borderRadius: rounded ? 8 : 0 }, { height }]}>
       {markers.map(marker => (
-        <Marker identifier={marker.id} coordinate= {marker.coords} />
+        <Marker key={marker.id} identifier={marker.id} coordinate={marker.coords} />
       ))}
 
       {origin ? <Marker identifier="origin" coordinate={{ latitude: origin.latitude, longitude: origin.longitude }} /> : null}

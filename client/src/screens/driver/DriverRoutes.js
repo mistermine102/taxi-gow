@@ -4,11 +4,14 @@ import { useEffect, useState } from 'react'
 import RouteItem from '../../components/RouteItem'
 import { useIsFocused } from '@react-navigation/native'
 import { View } from 'react-native'
+import MapModal from '../../components/modals/MapModal'
+import LocationExample from '../../components/_LocationExample'
 
 const DriverRoutes = () => {
   const [route, setRoute] = useState()
   const [btnCaption, setBtnCaption] = useState()
   const [btnFunction, setBtnFunction] = useState()
+  const [isModalVisible, setIsModalVisible] = useState(false)
   const isFocused = useIsFocused()
 
   const updateButton = (statusId, routeId) => {
@@ -76,8 +79,11 @@ const DriverRoutes = () => {
 
   if (!route) return null
 
+  return <LocationExample />
+
   return (
     <ScreenWrapper>
+      <MapModal isVisible={isModalVisible} onBtnPress={() => setIsModalVisible(false)} />
       <View className="mt-16 mb-4">
         <BaseTitle>Trasy</BaseTitle>
       </View>
