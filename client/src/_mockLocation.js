@@ -24,5 +24,7 @@ setInterval(() => {
     watchId: Location._getCurrentWatchId(),
     location: getLocation(counter),
   })
+  console.log("mocking location");
+  
   counter++
 }, 1000)

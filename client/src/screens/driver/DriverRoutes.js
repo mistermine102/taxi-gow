@@ -1,11 +1,12 @@
-import { BaseButton, BaseTitle, ScreenWrapper } from '../../components/base/base'
+import { BaseButton, BaseIcon, BaseLink, BaseTitle, ScreenWrapper } from '../../components/base/base'
 import appApi from '../../api/appApi'
 import { useEffect, useState } from 'react'
 import RouteItem from '../../components/RouteItem'
 import { useIsFocused } from '@react-navigation/native'
-import { View } from 'react-native'
+import { View, Text, Platform, Linking } from 'react-native'
 import MapModal from '../../components/modals/MapModal'
 import LocationExample from '../../components/_LocationExample'
+import { Marker } from 'react-native-maps'
 
 const DriverRoutes = () => {
   const [route, setRoute] = useState()
@@ -13,6 +14,17 @@ const DriverRoutes = () => {
   const [btnFunction, setBtnFunction] = useState()
   const [isModalVisible, setIsModalVisible] = useState(false)
   const isFocused = useIsFocused()
+
+  const openRouteNavigation = () => {
+    const scheme = Platform.select({ ios: 'maps://0,0?q=', android: 'geo:0,0?q=' })
+    const latLng = `${51.4177742},${17.927074}`
+    const label = 'Custom Label'
+    const url = Platform.select({
+      ios: `${scheme}${label}@${latLng}`,
+      android: `${scheme}${latLng}(${label})`,
+    })
+    Linking.openURL(url)
+  }
 
   const updateButton = (statusId, routeId) => {
     const uri = `/routes/${routeId}`
@@ -77,26 +89,46 @@ const DriverRoutes = () => {
     updateButton(statusId, _id)
   }, [route])
 
-  if (!route) return null
-
-  return <LocationExample />
-
   return (
     <ScreenWrapper>
-      <MapModal isVisible={isModalVisible} onBtnPress={() => setIsModalVisible(false)} />
-      <View className="mt-16 mb-4">
-        <BaseTitle>Trasy</BaseTitle>
-      </View>
-      <RouteItem
-        userType="driver"
-        name={route.clientId}
-        status={route.statusId}
-        origin={route.clientOrigin.address}
-        destination={route.destination.address}
-      >
-        <BaseButton title={btnCaption} onPress={btnFunction} />
-        <BaseButton alt title="Zobacz na mapie" />
-      </RouteItem>
+      <LocationExample />
+      {route ? (
+        <>
+          <MapModal
+            isVisible={isModalVisible}
+            onBtnPress={() => setIsModalVisible(false)}
+            btnCaption="Wróć"
+            title="Zobacz trasę"
+            onClose={() => setIsModalVisible(false)}
+            markers={[
+              <Marker key="currentLocation" identifier="currentLocation" coordinate={{ latitude: 51.4177742, longitude: 17.9270741 }}>
+                <BaseIcon name="map-marker-account" size={48} />
+              </Marker>,
+            ]}
+            directions={{
+              origin: { latitude: route.clientOrigin.latitude, longitude: route.clientOrigin.longitude },
+              destination: { latitude: route.destination.latitude, longitude: route.destination.longitude },
+            }}
+            region={{ latitude: 51.4177742, longitude: 17.9270741, latitudeDelta: 0.05, longitudeDelta: 0.05 }}
+          />
+          <View className="mt-16 mb-4">
+            <BaseTitle>Trasy</BaseTitle>
+          </View>
+          <RouteItem
+            userType="driver"
+            name={route.clientId}
+            status={route.statusId}
+            origin={route.clientOrigin.address}
+            destination={route.destination.address}
+          >
+            <View className="items-end -mt-4 mb-4">
+              <BaseLink onPress={openRouteNavigation} title="Nawigacja" />
+            </View>
+            <BaseButton title={btnCaption} onPress={btnFunction} />
+            <BaseButton alt title="Zobacz na mapie" onPress={() => setIsModalVisible(true)} />
+          </RouteItem>
+        </>
+      ) : null}
     </ScreenWrapper>
   )
 }

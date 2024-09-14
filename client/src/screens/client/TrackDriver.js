@@ -5,6 +5,8 @@ import appApi from '../../api/appApi'
 import RouteItem from '../../components/RouteItem'
 import { useIsFocused } from '@react-navigation/native'
 import MapModal from '../../components/modals/MapModal'
+import { Marker } from 'react-native-maps'
+import { BaseIcon } from '../../components/base/base'
 
 const DriverTrackScreen = () => {
   const isFocused = useIsFocused()
@@ -15,7 +17,7 @@ const DriverTrackScreen = () => {
   const openModal = async () => {
     try {
       setIsModalVisible(true)
-      
+
       const response = await appApi.get('/users/route/driver/location')
       setDriverLocation(response.data.coords)
     } catch (err) {
@@ -45,7 +47,15 @@ const DriverTrackScreen = () => {
         isVisible={isModalVisible}
         onClose={() => setIsModalVisible(false)}
         onBtnPress={() => setIsModalVisible(false)}
-        markers={driverLocation ? [{ coords: driverLocation, id: 'driverLocation' }] : []}
+        markers={
+          driverLocation
+            ? [
+                <Marker key="driverLocation" identifier="driverLocation" coordinate={driverLocation}>
+                  <BaseIcon name="taxi" size={48} />
+                </Marker>,
+              ]
+            : []
+        }
         region={
           driverLocation
             ? { latitude: driverLocation.latitude, longitude: driverLocation.longitude, latitudeDelta: 0.01, longitudeDelta: 0.01 }

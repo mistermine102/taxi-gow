@@ -12,9 +12,7 @@ const Map = ({ directions = {}, markers = [], height = 300, rounded = false, reg
 
   return (
     <MapView region={region} ref={mapRef} style={[{ borderRadius: rounded ? 8 : 0 }, { height }]}>
-      {markers.map(marker => (
-        <Marker key={marker.id} identifier={marker.id} coordinate={marker.coords} />
-      ))}
+      {markers.map(marker => marker)}
 
       {origin ? <Marker identifier="origin" coordinate={{ latitude: origin.latitude, longitude: origin.longitude }} /> : null}
       {destination ? <Marker identifier="destination" coordinate={{ latitude: destination.latitude, longitude: destination.longitude }} /> : null}
