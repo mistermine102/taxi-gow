@@ -1,7 +1,7 @@
 import { View, Text } from 'react-native'
 import { useContext } from 'react'
 import AuthContext from '../context/Auth'
-import { BaseButton } from '../components/base/base'
+import { BaseButton, BaseTitle, ScreenWrapper } from '../components/base/base'
 
 const AccountScreen = () => {
   const { user, signout } = useContext(AuthContext)
@@ -9,17 +9,20 @@ const AccountScreen = () => {
   if (!user) return null
 
   return (
-    <View className="bg-white flex-1 px-base">
-      <View className=" bg-lightGray mt-8 px-8 py-4 rounded-md">
+    <ScreenWrapper>
+      <View className="mt-16 mb-4">
+        <BaseTitle>Szczegóły konta</BaseTitle>
+      </View>
+      <View className=" bg-lightGray px-8 py-4 rounded-md">
         <View className="flex-row justify-between">
-          <Text className="text-[16px] font-bold">Email</Text>
-          <Text className="text-[16px]">{user.email}</Text>
+          <Text>Email</Text>
+          <Text>{user.email}</Text>
         </View>
         <View className="mt-8">
           <BaseButton onPress={signout} title="Wyloguj" />
         </View>
       </View>
-    </View>
+    </ScreenWrapper>
   )
 }
 

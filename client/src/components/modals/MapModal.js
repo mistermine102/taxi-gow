@@ -1,5 +1,5 @@
 import EmptyModal from './EmptyModal'
-import { View, Text, StyleSheet } from 'react-native'
+import { View, StyleSheet, Text } from 'react-native'
 import { BaseButton } from '../base/base'
 import Map from '../Map'
 
@@ -17,7 +17,7 @@ const MapModal = ({
     <EmptyModal isVisible={isVisible} onClose={onClose}>
       <View style={styles.modalView} className="bg-white mx-2 my-8 flex-1 rounded-3xl items-center">
         <View className="p-4">
-          <Text className="text-xl font-semibold text-darkGray">{title}</Text>
+          <Text className="text-xl font-semibold">{title}</Text>
         </View>
         <View className="flex-1 w-full">
           <Map region={region} markers={markers} directions={directions} height="100%" />

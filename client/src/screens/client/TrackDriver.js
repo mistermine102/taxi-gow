@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react'
 import { ScreenWrapper, BaseTitle, BaseButton } from '../../components/base/base'
-import { View } from 'react-native'
+import { View, Image } from 'react-native'
 import appApi from '../../api/appApi'
 import RouteItem from '../../components/RouteItem'
 import { useIsFocused } from '@react-navigation/native'
 import MapModal from '../../components/modals/MapModal'
 import { Marker } from 'react-native-maps'
 import { BaseIcon } from '../../components/base/base'
+import { noRoute } from '../../images/index'
 
 const DriverTrackScreen = () => {
   const isFocused = useIsFocused()
@@ -39,7 +40,18 @@ const DriverTrackScreen = () => {
     getRoute()
   }, [isFocused])
 
-  if (!route) return null
+  if (!route)
+    return (
+      <ScreenWrapper>
+        <View className="items-center mt-8">
+          <BaseTitle>Wygląda na to że nie zamówiłeś żadnego kierowcy</BaseTitle>
+          <Image source={noRoute} className="w-[400px] h-[200px]" />
+          <View className="w-full">
+            <BaseButton title="Zamów kierowcę" />
+          </View>
+        </View>
+      </ScreenWrapper>
+    )
 
   return (
     <ScreenWrapper>

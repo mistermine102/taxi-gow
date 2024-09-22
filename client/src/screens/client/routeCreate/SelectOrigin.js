@@ -1,4 +1,4 @@
-import { View } from 'react-native'
+import { Image, View } from 'react-native'
 import PlacesInput from '../../../components/PlacesInput'
 import Map from '../../../components/Map'
 import { useContext, useEffect } from 'react'
@@ -6,6 +6,7 @@ import RouteContext from '../../../context/Route'
 import appApi from '../../../api/appApi'
 import { useIsFocused } from '@react-navigation/native'
 import { ScreenWrapper, BaseButton, BaseTitle } from '../../../components/base/base'
+import { familyTaxi } from '../../../images/index'
 
 const SelectOrigin = ({ navigation }) => {
   const isFocused = useIsFocused()
@@ -14,7 +15,7 @@ const SelectOrigin = ({ navigation }) => {
 
   useEffect(() => {
     if (!isFocused) return
-    
+
     const getRoute = async () => {
       //check if logged in user isn't in an active route
       //if he is, then navigate him to tracking a driver
@@ -44,11 +45,15 @@ const SelectOrigin = ({ navigation }) => {
       {origin ? (
         <View className="mt-8">
           <Map rounded directions={{ origin: origin.coords }} />
-          <View className="mt-4 px-8">
+          <View className="mt-4">
             <BaseButton title="Kontynuuj" onPress={() => navigation.navigate('SelectDestination')} />
           </View>
         </View>
-      ) : null}
+      ) : (
+        <View className="items-center mt-8 p-4">
+          <Image source={familyTaxi} className="w-[400px] h-[200px]" />
+        </View>
+      )}
     </ScreenWrapper>
   )
 }

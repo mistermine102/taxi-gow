@@ -132,4 +132,5 @@ const DriverRoutes = () => {
     </ScreenWrapper>
   )
 }
+
 export default DriverRoutes

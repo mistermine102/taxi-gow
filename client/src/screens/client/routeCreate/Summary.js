@@ -1,4 +1,4 @@
-import { Text, View } from 'react-native'
+import { View, Text } from 'react-native'
 import { useContext, useState } from 'react'
 import RouteContext from '../../../context/Route'
 import appApi from '../../../api/appApi'
@@ -48,13 +48,13 @@ const Summary = ({ navigation }) => {
         <BaseTitle>Podsumowanie</BaseTitle>
       </View>
       <View className="my-4 bg-lightGray rounded-md p-2">
-        <Text className="text-darkGray mb-1">Punkt startowy: {route.clientOrigin.address}</Text>
-        <Text className="text-darkGray mb-1">Punkt końcowy: {route.destination.address}</Text>
-        <Text className="text-darkGray mb-1">Długość tasy: ???</Text>
-        <Text className="text-darkGray mb-1">Kierowca: {route.driver._id} </Text>
-        <Text className="text-darkGray mb-1">Koszt: {route.driver.cost.total.toFixed(2)} zł</Text>
-        <Text className="text-darkGray mb-1">Czas oczekiwania: {route.driver.duration.text}</Text>
-        <Text className="text-darkGray mb-1">Czas podróży:</Text>
+        <Text className="mb-1">Punkt startowy: {route.clientOrigin.address}</Text>
+        <Text className="mb-1">Punkt końcowy: {route.destination.address}</Text>
+        <Text className="mb-1">Długość tasy: ???</Text>
+        <Text className="mb-1">Kierowca: {route.driver._id} </Text>
+        <Text className="mb-1">Koszt: {route.driver.cost.total.toFixed(2)} zł</Text>
+        <Text className="mb-1">Czas oczekiwania: {route.driver.duration.text}</Text>
+        <Text className="mb-1">Czas podróży:</Text>
       </View>
       <BaseButton title="Zapłać" onPress={createRoute} />
     </ScreenWrapper>

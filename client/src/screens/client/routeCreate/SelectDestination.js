@@ -31,7 +31,7 @@ const SelectDestination = ({ navigation }) => {
             <Map rounded directions={{ origin: origin.coords }} />
           )}
 
-          <View className="mt-4 px-8">
+          <View className="mt-4">
             <BaseButton title="Kontynuuj" onPress={() => navigation.navigate('SelectDriver')} />
           </View>
         </View>

@@ -5,10 +5,14 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons'
 export const BaseButton = ({ alt = false, title = 'Przycisk', onPress = () => {} }) => {
   return (
     <TouchableOpacity
-      className={alt ? 'bg-transparent border border-darkGray items-center rounded-md py-3 mb-2' : 'bg-primary border border-primary items-center rounded-md py-3 mb-2'}
+      className={
+        alt
+          ? 'bg-transparent border border-darkGray items-center rounded-md py-3 mb-2'
+          : 'bg-primary border border-primary items-center rounded-md py-3 mb-2'
+      }
       onPress={onPress}
     >
-      <Text className="text-[16px] font-semibold text-darkGray">{title}</Text>
+      <Text className="font-semibold text-darkGray">{title}</Text>
     </TouchableOpacity>
   )
 }
@@ -21,7 +25,7 @@ export const BaseInput = ({ value = '', secureTextEntry = false, autoCapitalize 
       autoCapitalize={autoCapitalize}
       onChangeText={onChangeText}
       placeholder={placeholder}
-      className="text-[16px] rounded-md mb-4 bg-lightGray px-6 py-3"
+      className="rounded-md mb-4 bg-lightGray px-6 py-3"
     />
   )
 }
@@ -29,13 +33,13 @@ export const BaseInput = ({ value = '', secureTextEntry = false, autoCapitalize 
 export const BaseLink = ({ onPress = () => {}, title = 'Link' }) => {
   return (
     <TouchableOpacity onPress={onPress}>
-      <Text className="font-semibold text-center text-darkGray">{title}</Text>
+      <Text className="font-semibold text-center">{title}</Text>
     </TouchableOpacity>
   )
 }
 
 export const BaseTitle = ({ children }) => {
-  return <Text className="text-2xl text-darkGray font-semibold text-center">{children}</Text>
+  return <Text className="text-2xl text-darkGray font-bold text-left">{children}</Text>
 }
 
 export const BaseIcon = ({ name, size = 24, color = '#4d4d4d' }) => {
