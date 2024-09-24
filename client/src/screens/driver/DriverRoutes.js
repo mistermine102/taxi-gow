@@ -59,7 +59,7 @@ const DriverRoutes = () => {
       })
 
       const { route: newRoute } = response.data
-      newRoute.statusId === 5 ? setRoute(null) : setRoute(newRoute)
+      newRoute.status._id === 5 ? setRoute(null) : setRoute(newRoute)
     })
   }
 
@@ -70,7 +70,6 @@ const DriverRoutes = () => {
       try {
         const response = await appApi.get('/users/route')
         if (!response.data.route) return
-
         const { statusId, _id } = response.data.route
 
         updateButton(statusId, _id)
@@ -85,8 +84,8 @@ const DriverRoutes = () => {
   useEffect(() => {
     if (!route) return
 
-    const { statusId, _id } = route
-    updateButton(statusId, _id)
+    const { status, _id } = route
+    updateButton(status._id, _id)
   }, [route])
 
   return (
@@ -117,7 +116,7 @@ const DriverRoutes = () => {
           <RouteItem
             userType="driver"
             name={route.clientId}
-            status={route.statusId}
+            status={route.status}
             origin={route.clientOrigin.address}
             destination={route.destination.address}
           >

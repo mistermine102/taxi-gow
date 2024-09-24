@@ -6,6 +6,8 @@ const locationSchema = new mongoose.Schema({
   address: String,
 })
 
+const statusSchema = require('./Status')
+
 const schema = new mongoose.Schema({
   clientId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -22,10 +24,7 @@ const schema = new mongoose.Schema({
   waypoints: [locationSchema],
   totalDistance: Number,
   totalCost: Number,
-  statusId: {
-    type: Number,
-    required: true,
-  },
+  status: statusSchema,
   history: [
     {
       message: String,

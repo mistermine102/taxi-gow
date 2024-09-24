@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const Route = mongoose.model('Route')
 const ArchivedRoute = mongoose.model('ArchivedRoute')
 const User = mongoose.model('User')
+const Status = mongoose.model('Status')
 const calculateDistances = require('../utils/calculateDistances')
 const AppError = require('../classes/AppError')
 const parseCoords = require('../utils/parseCoords')
@@ -52,6 +53,9 @@ exports.createRoute = async (req, res) => {
   const totalSeconds = driverToClient.duration.value + clientToDestination.duration.value
   const totalMinutes = Math.ceil(totalSeconds / 60)
 
+  //find route status
+  const status = await Status.findById(1)
+
   const newRoute = new Route({
     clientId: req.user._id,
     driverId,
@@ -72,7 +76,7 @@ exports.createRoute = async (req, res) => {
     },
     totalDistance: totalDistanceKm,
     totalCost,
-    statusId: 1,
+    status,
     history: [],
     duration: {
       estimated: totalMinutes,
@@ -105,6 +109,10 @@ exports.changeRouteStatus = async (req, res) => {
   //check if user is the driver of the route
   if (!route.driverId.equals(req.user._id)) throw new AppError("Can't modify this route", 401)
 
+  //update route status
+  const status = await Status.findById(newStatusId)
+  route.status = status
+
   switch (newStatusId) {
     case 1:
       //route when created has a statusId === 1
@@ -112,21 +120,17 @@ exports.changeRouteStatus = async (req, res) => {
     case 2:
       //route started
       route.meta.startedAt = new Date()
-      route.statusId = 2
       break
     case 3:
       //client picked up
-      route.statusId = 3
       route.meta.clientPickedUpAt = new Date()
       break
     case 4:
       //client dropped off
-      route.statusId = 4
       route.meta.clientDroppedOffAt = new Date()
       break
     case 5:
       //route finished
-      route.statusId = 5
       route.meta.finishedAt = new Date()
 
       //caclulate actual route duration
@@ -144,7 +148,6 @@ exports.changeRouteStatus = async (req, res) => {
 
       //change driver's isAvailable
       await User.findByIdAndUpdate(route.driverId, { isAvailable: true })
-
       break
     default:
       break

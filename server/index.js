@@ -3,6 +3,7 @@ require('dotenv').config()
 //models
 require('./models/User')
 require('./models/Route')
+require("./models/Status")
 
 //packages
 const express = require('express')

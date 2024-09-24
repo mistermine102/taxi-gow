@@ -56,7 +56,17 @@ const MainTabNavigator = () => {
           />
         </>
       ) : (
-        <Tab.Screen name="DriverRoutes" component={DriverRoutesScreen} />
+        <Tab.Screen
+          options={{
+            title: 'Trasy',
+            tabBarActiveTintColor: ACTIVE_TAB_COLOR,
+            tabBarInactiveTintColor: INACTIVE_TAB_COLOR,
+            tabBarLabelStyle: { fontWeight: 'bold' },
+            tabBarIcon: ({ focused }) => <BaseIcon name="map" color={focused ? ACTIVE_TAB_COLOR : INACTIVE_TAB_COLOR} />,
+          }}
+          name="DriverRoutes"
+          component={DriverRoutesScreen}
+        />
       )}
       <Tab.Screen
         options={{
