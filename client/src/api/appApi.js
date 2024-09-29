@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import axios from 'axios'
 
 const appApi = axios.create({
-  baseURL: 'https://57d2-109-173-241-208.ngrok-free.app',
+  baseURL: 'https://bec6-109-173-197-185.ngrok-free.app',
 })
 
 appApi.interceptors.request.use(

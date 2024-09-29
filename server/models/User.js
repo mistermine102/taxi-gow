@@ -14,6 +14,7 @@ const schema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  hasActiveRoute: Boolean,
   isAvailable: Boolean,
   pricing: {
     perKm: Number,

@@ -75,6 +75,7 @@ const addDummyDrivers = async (req, res) => {
       password,
       role: 'driver',
       isAvailable: true,
+      hasActiveRoute: false,
       pricing: dummyPrices[i],
       currentLocation: {
         timestamp: 10000,

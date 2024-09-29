@@ -95,6 +95,7 @@ exports.createRoute = async (req, res) => {
 
   //change driver's isAvailable
   foundDriver.isAvailable = false
+  foundDriver.hasActiveRoute = true
   await foundDriver.save()
 
   res.json({ route: newRoute })
@@ -147,7 +148,7 @@ exports.changeRouteStatus = async (req, res) => {
       await archivedRoute.save()
 
       //change driver's isAvailable
-      await User.findByIdAndUpdate(route.driverId, { isAvailable: true })
+      await User.findByIdAndUpdate(route.driverId, { isAvailable: true, hasActiveRoute: false })
       break
     default:
       break
