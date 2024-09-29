@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { ScreenWrapper, BaseTitle, BaseButton } from '../../components/base/base'
-import { View, Image } from 'react-native'
+import { View, Image, ActivityIndicator } from 'react-native'
 import appApi from '../../api/appApi'
 import RouteItem from '../../components/RouteItem'
 import { useIsFocused } from '@react-navigation/native'
@@ -14,6 +14,7 @@ const DriverTrackScreen = ({ navigation }) => {
   const [route, setRoute] = useState()
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [driverLocation, setDriverLocation] = useState()
+  const [isLoading, setIsLoading] = useState(false)
 
   const navigateToRouteCreate = () => {
     navigation.navigate('SelectOrigin')
@@ -35,15 +36,27 @@ const DriverTrackScreen = ({ navigation }) => {
 
     const getRoute = async () => {
       try {
+        setIsLoading(true)
         const response = await appApi.get('/users/route')
 
         setRoute(response.data.route)
       } catch (error) {
         console.log(error)
+      } finally {
+        setIsLoading(false)
       }
     }
     getRoute()
   }, [isFocused])
+
+  if (isLoading)
+    return (
+      <ScreenWrapper>
+        <View className="w-full h-[200px] justify-center items-center">
+          <ActivityIndicator />
+        </View>
+      </ScreenWrapper>
+    )
 
   if (!route)
     return (

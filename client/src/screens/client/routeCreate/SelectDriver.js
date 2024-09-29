@@ -2,7 +2,7 @@ import { FlatList, Text, TouchableOpacity, View } from 'react-native'
 import appApi from '../../../api/appApi'
 import { useEffect, useContext, useState } from 'react'
 import RouteContext from '../../../context/Route'
-import DriverItem from '../../../components/DriverItem'
+import DriverItem from '../../../components/client/DriverItem'
 import { ScreenWrapper, BaseButton, BaseTitle } from '../../../components/base/base'
 
 const SelectDriver = ({ navigation }) => {

@@ -2,6 +2,7 @@ import { createContext, useReducer } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import appApi from '../api/appApi'
 import { navigate } from '../RootNavigation'
+import { ActivityIndicator } from 'react-native'
 
 const Context = createContext()
 

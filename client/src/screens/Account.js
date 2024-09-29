@@ -2,7 +2,7 @@ import { View, Text } from 'react-native'
 import { useContext } from 'react'
 import AuthContext from '../context/Auth'
 import { BaseButton, BaseTitle, ScreenWrapper } from '../components/base/base'
-import IsAvailable from './driver/IsAvailable'
+import IsAvailable from '../components/driver/IsAvailable'
 
 const AccountScreen = () => {
   const { user, signout } = useContext(AuthContext)

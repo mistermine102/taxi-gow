@@ -11,7 +11,12 @@ const Map = ({ directions = {}, markers = [], height = 300, rounded = false, reg
   }, [origin, destination])
 
   return (
-    <MapView region={region} ref={mapRef} style={[{ borderRadius: rounded ? 8 : 0 }, { height }]}>
+    <MapView
+      key={process.env.GOOGLE_PLACES_API_KEY}
+      region={region}
+      ref={mapRef}
+      style={[{ borderRadius: rounded ? 8 : 0 }, { height }]}
+    >
       {markers.map(marker => marker)}
 
       {origin ? <Marker identifier="origin" coordinate={{ latitude: origin.latitude, longitude: origin.longitude }} /> : null}

@@ -1,10 +1,10 @@
-import { TouchableOpacity, Text, View, TextInput } from 'react-native'
+import { TouchableOpacity, Text, View, TextInput, ActivityIndicator } from 'react-native'
 import { useEffect } from 'react'
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons'
 import Animated, { useSharedValue, withTiming, useAnimatedStyle } from 'react-native-reanimated'
 import colors from '../../../colors'
 
-export const BaseButton = ({ alt = false, title = 'Przycisk', onPress = () => {} }) => {
+export const BaseButton = ({ alt = false, title = 'Przycisk', onPress = () => {}, isLoading = false }) => {
   return (
     <TouchableOpacity
       className={
@@ -14,7 +14,7 @@ export const BaseButton = ({ alt = false, title = 'Przycisk', onPress = () => {}
       }
       onPress={onPress}
     >
-      <Text className="font-semibold text-darkGray">{title}</Text>
+      {isLoading ? <ActivityIndicator /> : <Text className="font-semibold text-darkGray">{title}</Text>}
     </TouchableOpacity>
   )
 }

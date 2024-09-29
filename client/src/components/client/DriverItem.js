@@ -1,5 +1,5 @@
 import { View, Text } from 'react-native'
-import { BaseIcon} from './base/base'
+import { BaseIcon} from '../base/base'
 
 const driverItem = ({ driver, isSelected = false }) => {
   return (

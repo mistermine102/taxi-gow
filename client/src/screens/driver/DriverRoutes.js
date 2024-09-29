@@ -3,10 +3,11 @@ import appApi from '../../api/appApi'
 import { useEffect, useState } from 'react'
 import RouteItem from '../../components/RouteItem'
 import { useIsFocused } from '@react-navigation/native'
-import { View, Text, Platform, Linking } from 'react-native'
+import { ActivityIndicator, View } from 'react-native'
 import MapModal from '../../components/modals/MapModal'
-import LocationExample from '../../components/_LocationExample'
+import BackgroundTracking from '../../components/driver/BackgroundTracking'
 import { Marker } from 'react-native-maps'
+import RouteNavigation from '../../components/driver/RouteNavigation'
 
 const DriverRoutes = () => {
   const [route, setRoute] = useState()
@@ -14,17 +15,7 @@ const DriverRoutes = () => {
   const [btnFunction, setBtnFunction] = useState()
   const [isModalVisible, setIsModalVisible] = useState(false)
   const isFocused = useIsFocused()
-
-  const openRouteNavigation = () => {
-    const scheme = Platform.select({ ios: 'maps://0,0?q=', android: 'geo:0,0?q=' })
-    const latLng = `${51.4177742},${17.927074}`
-    const label = 'Custom Label'
-    const url = Platform.select({
-      ios: `${scheme}${label}@${latLng}`,
-      android: `${scheme}${latLng}(${label})`,
-    })
-    Linking.openURL(url)
-  }
+  const [isLoading, setIsLoading] = useState(false)
 
   const updateButton = (statusId, routeId) => {
     const uri = `/routes/${routeId}`
@@ -68,6 +59,7 @@ const DriverRoutes = () => {
 
     const getRoutes = async () => {
       try {
+        setIsLoading(true)
         const response = await appApi.get('/users/route')
         if (!response.data.route) return
         const { statusId, _id } = response.data.route
@@ -76,6 +68,8 @@ const DriverRoutes = () => {
         setRoute(response.data.route)
       } catch (err) {
         console.log(err)
+      } finally {
+        setIsLoading(false)
       }
     }
     getRoutes()
@@ -90,7 +84,7 @@ const DriverRoutes = () => {
 
   return (
     <ScreenWrapper>
-      <LocationExample />
+      <BackgroundTracking />
       {route ? (
         <>
           <MapModal
@@ -110,22 +104,28 @@ const DriverRoutes = () => {
             }}
             region={{ latitude: 51.4177742, longitude: 17.9270741, latitudeDelta: 0.05, longitudeDelta: 0.05 }}
           />
-          <View className="mt-16 mb-4">
+          <View className="mt-2 mb-4">
             <BaseTitle>Trasy</BaseTitle>
           </View>
-          <RouteItem
-            userType="driver"
-            name={route.clientId}
-            status={route.status}
-            origin={route.clientOrigin.address}
-            destination={route.destination.address}
-          >
-            <View className="items-end -mt-4 mb-4">
-              <BaseLink onPress={openRouteNavigation} title="Nawigacja" />
+          {isLoading ? (
+            <View className="w-full h-[200px] items-center justify-center">
+              <ActivityIndicator />
             </View>
-            <BaseButton title={btnCaption} onPress={btnFunction} />
-            <BaseButton alt title="Zobacz na mapie" onPress={() => setIsModalVisible(true)} />
-          </RouteItem>
+          ) : (
+            <RouteItem
+              userType="driver"
+              name={route.clientId}
+              status={route.status}
+              origin={route.clientOrigin.address}
+              destination={route.destination.address}
+            >
+              <View className="items-end -mt-4 mb-4">
+                <RouteNavigation clientOrigin={route.clientOrigin} destination={route.destination} />
+              </View>
+              <BaseButton title={btnCaption} onPress={btnFunction} />
+              <BaseButton alt title="Zobacz na mapie" onPress={() => setIsModalVisible(true)} />
+            </RouteItem>
+          )}
         </>
       ) : null}
     </ScreenWrapper>
