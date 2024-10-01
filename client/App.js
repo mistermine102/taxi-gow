@@ -1,7 +1,4 @@
 import 'react-native-gesture-handler'
-import { NotoSans_400Regular, NotoSans_600SemiBold, NotoSans_700Bold, useFonts } from '@expo-google-fonts/noto-sans'
-import * as SplashScreen from 'expo-splash-screen'
-import { useEffect } from 'react'
 
 //navigation
 import AuthStackNavigator from './src/navigation/AuthStack'
@@ -22,21 +19,6 @@ import SuccessScreen from './src/screens/Success'
 const Stack = createNativeStackNavigator()
 
 const App = () => {
-  const [loaded, error] = useFonts({
-    NotoSans_400Regular,
-    NotoSans_600SemiBold,
-    NotoSans_700Bold,
-  })
-
-  useEffect(() => {
-    if (loaded || error) {
-      SplashScreen.hideAsync()
-    }
-  }, [loaded, error])
-
-  if (!loaded && !error) {
-    return null
-  }
   return (
     <NavigationContainer ref={navigationRef}>
       <Stack.Navigator screenOptions={{ gestureEnabled: false }}>

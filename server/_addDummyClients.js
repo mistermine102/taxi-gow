@@ -22,6 +22,7 @@ const addDummyClients = async (req, res) => {
     const client = new User({
       email: clientsEmails[i],
       password,
+      phoneNumber: '+48532395944',
       role: 'client',
     })
     client.save()

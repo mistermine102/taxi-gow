@@ -72,6 +72,7 @@ const addDummyDrivers = async (req, res) => {
 
     const driver = new User({
       email: `driver${i + 1}@gmail.com`,
+      phoneNumber: '+48532395944',
       password,
       role: 'driver',
       isAvailable: true,

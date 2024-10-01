@@ -2,7 +2,7 @@ import { createContext, useReducer } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import appApi from '../api/appApi'
 import { navigate } from '../RootNavigation'
-import { ActivityIndicator } from 'react-native'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 const Context = createContext()
 
@@ -44,23 +44,24 @@ export const Provider = ({ children }) => {
       //navigate to mainTab
       navigate('MainTab')
     } catch (err) {
-      //invalid email or password
-      //ideally show an alert
-      //TODO
-      console.log(err.response.data)
+      throw err
     }
   }
 
-  const signup = async ({ email, password }) => {
+  const signup = async ({ email, password, phoneNumber }) => {
     try {
       //validate
       const isEmailValid = validateEmail(email)
-      if (!isEmailValid) throw new Error('Invalid email')
-      if (password.length < 6) throw new Error('Password must be at least 6 characters long')
+      const parsedPhoneNumber = parsePhoneNumberFromString(phoneNumber)
+
+      if (!isEmailValid) throw new Error('INVALID_EMAIL')
+      if (!parsedPhoneNumber || !parsedPhoneNumber.isValid()) throw new Error('INVALID_PHONE')
+      if (password.length < 6) throw new Error('INVALID_PASSWORD')
 
       const response = await appApi.post('/signup', {
         email,
         password,
+        phoneNumber,
       })
       //store token in async storage
       await AsyncStorage.setItem('token', response.data.token)
@@ -71,10 +72,7 @@ export const Provider = ({ children }) => {
       //navigate to mainTab
       navigate('MainTab')
     } catch (err) {
-      //invalid email or password
-      //ideally show an alert
-      //TODO
-      console.log(err)
+      throw err
     }
   }
 

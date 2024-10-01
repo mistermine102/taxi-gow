@@ -19,6 +19,10 @@ const AccountScreen = () => {
           <Text>Email</Text>
           <Text>{user.email}</Text>
         </View>
+        <View className="flex-row justify-between items-center">
+          <Text>Numer telefonu</Text>
+          <Text>{user.phoneNumber}</Text>
+        </View>
         {user.role === 'driver' ? <IsAvailable /> : null}
       </View>
       <View className="mt-4">

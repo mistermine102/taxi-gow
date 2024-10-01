@@ -6,6 +6,7 @@ const schema = new mongoose.Schema({
     unique: true,
     required: true,
   },
+  phoneNumber: String,
   password: {
     type: String,
     required: true,
@@ -35,12 +36,13 @@ const schema = new mongoose.Schema({
 })
 
 schema.methods.transform = function () {
-  const { _id, email, role } = this
+  const { _id, email, phoneNumber, role } = this
 
   return {
     _id,
     email,
     role,
+    phoneNumber,
   }
 }
 

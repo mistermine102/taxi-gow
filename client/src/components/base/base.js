@@ -9,8 +9,8 @@ export const BaseButton = ({ alt = false, title = 'Przycisk', onPress = () => {}
     <TouchableOpacity
       className={
         alt
-          ? 'bg-transparent border border-darkGray items-center rounded-md py-3 mb-2'
-          : 'bg-primary border border-primary items-center rounded-md py-3 mb-2'
+          ? 'bg-transparent border border-darkGray items-center justify-center rounded-md mb-2 h-10'
+          : 'bg-primary border border-primary items-center justify-center rounded-md mb-2 h-10'
       }
       onPress={onPress}
     >
@@ -19,15 +19,23 @@ export const BaseButton = ({ alt = false, title = 'Przycisk', onPress = () => {}
   )
 }
 
-export const BaseInput = ({ value = '', secureTextEntry = false, autoCapitalize = 'none', placeholder = '', onChangeText = () => {} }) => {
+export const BaseInput = ({
+  keyboardType = 'default',
+  value = '',
+  secureTextEntry = false,
+  autoCapitalize = 'none',
+  placeholder = '',
+  onChangeText = () => {},
+}) => {
   return (
     <TextInput
       value={value}
       secureTextEntry={secureTextEntry}
+      keyboardType={keyboardType}
       autoCapitalize={autoCapitalize}
       onChangeText={onChangeText}
       placeholder={placeholder}
-      className="rounded-md mb-4 bg-lightGray px-6 py-3"
+      className="rounded-md mb-4 bg-lightGray px-4 py-3 text-[16px]"
     />
   )
 }
@@ -35,7 +43,7 @@ export const BaseInput = ({ value = '', secureTextEntry = false, autoCapitalize 
 export const BaseLink = ({ onPress = () => {}, title = 'Link' }) => {
   return (
     <TouchableOpacity onPress={onPress}>
-      <Text className="font-semibold text-center">{title}</Text>
+      <Text className="font-semibold">{title}</Text>
     </TouchableOpacity>
   )
 }
