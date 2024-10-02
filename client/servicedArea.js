@@ -1,6 +1,6 @@
 export const SERVICED_AREA_CENTER = {
-  latitude: 51.425697,
-  longitude: 17.93334,
+  latitude: 51.425698,
+  longitude: 17.933337,
 }
 
 //in meters

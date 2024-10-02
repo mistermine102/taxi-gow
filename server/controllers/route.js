@@ -9,6 +9,7 @@ const parseCoords = require('../utils/parseCoords')
 const calculateTotalCost = require('../utils/calculateTotalCost')
 
 exports.createRoute = async (req, res) => {
+  return res.json('test')
   //1. server gets origin, destination and driverId from client (done)
   //2. server calculates route's price based on those 3 pieces of information (done)
   //3. server creates payment and sends payment id to the client

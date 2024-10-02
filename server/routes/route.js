@@ -6,11 +6,12 @@ const tryCatch = require('../utils/tryCatch')
 const { body } = require('express-validator')
 const validate = require('../middleware/validate')
 const validateCoords = require('../utils/validateCoords')
+const validatePointDistance = require('../utils/validatePointDistance')
 const mongoose = require('mongoose')
 
 const createRouteValidators = [
-  body('clientOrigin').notEmpty().custom(validateCoords),
-  body('destination').notEmpty().custom(validateCoords),
+  body('clientOrigin').notEmpty().custom(validateCoords).custom(validatePointDistance),
+  body('destination').notEmpty().custom(validateCoords).custom(validatePointDistance),
   body('driverId')
     .notEmpty()
     .custom(value => {

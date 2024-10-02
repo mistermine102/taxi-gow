@@ -1,22 +1,8 @@
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
 import { View } from 'react-native'
-import { useEffect, useState } from 'react'
-import useLocation from '../hooks/useLocation'
-import { SERVICED_AREA_CENTER, SERVICED_AREA_RADIUS } from '../../servicedArea'
+import { SERVICED_AREA_CENTER, SERVICED_AREA_RADIUS } from '../../servicedArea.js'
 
 const PlacesInput = ({ placeholder, onPlaceSelect }) => {
-  const { location } = useLocation()
-  const [parsedLocation, setParsedLocation] = useState()
-
-  useEffect(() => {
-    if (!location) return
-
-    const { latitude, longitude } = location.coords
-    setParsedLocation(`${latitude},${longitude}`)
-  }, [location])
-
-  if (!location) return null
-
   return (
     <View>
       <GooglePlacesAutocomplete
