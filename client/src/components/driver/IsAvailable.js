@@ -1,8 +1,9 @@
-import { View, Text, ActivityIndicator } from 'react-native'
+import { View, Text } from 'react-native'
 import { useState, useEffect } from 'react'
 import { useIsFocused } from '@react-navigation/native'
 import appApi from '../../api/appApi'
 import { BaseSwitch } from '../base/base'
+import Loader from '../Loader'
 
 const IsAvailable = () => {
   const isFocused = useIsFocused()
@@ -40,7 +41,7 @@ const IsAvailable = () => {
   return (
     <View className="flex-row justify-between items-center">
       <Text>Dostępny</Text>
-      {isLoading ? <ActivityIndicator /> : <BaseSwitch value={isAvailable} onPress={toggleSwitch} disabled={hasActiveRoute} />}
+      {isLoading ? <Loader /> : <BaseSwitch value={isAvailable} onPress={toggleSwitch} disabled={hasActiveRoute} />}
     </View>
   )
 }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { ScreenWrapper, BaseTitle, BaseButton } from '../../components/base/base'
-import { View, Image, ActivityIndicator } from 'react-native'
+import { View, Image } from 'react-native'
 import appApi from '../../api/appApi'
 import RouteItem from '../../components/RouteItem'
 import { useIsFocused } from '@react-navigation/native'
@@ -8,6 +8,7 @@ import MapModal from '../../components/modals/MapModal'
 import { Marker } from 'react-native-maps'
 import { BaseIcon } from '../../components/base/base'
 import { noRoute } from '../../images/index'
+import Loader from '../../components/Loader'
 
 const DriverTrackScreen = ({ navigation }) => {
   const isFocused = useIsFocused()
@@ -53,7 +54,7 @@ const DriverTrackScreen = ({ navigation }) => {
     return (
       <ScreenWrapper>
         <View className="w-full h-[200px] justify-center items-center">
-          <ActivityIndicator />
+          <Loader />
         </View>
       </ScreenWrapper>
     )

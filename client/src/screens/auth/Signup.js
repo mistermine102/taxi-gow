@@ -1,10 +1,11 @@
-import { View, Text } from 'react-native'
+import { View } from 'react-native'
 import { useContext, useState } from 'react'
 import AuthContext from '../../context/Auth'
 import { BaseButton, BaseLink, BaseInput, ScreenWrapper, BaseTitle } from '../../components/base/base'
 import Toast from '../../components/Toast'
 import useToast from '../../hooks/useToast'
 import PhoneInput from '../../components/PhoneInput'
+import useAsyncRequest from '../../hooks/useAsyncRequest'
 
 const SignupScreen = ({ navigation }) => {
   const { signup } = useContext(AuthContext)
@@ -12,25 +13,25 @@ const SignupScreen = ({ navigation }) => {
   const [phoneNumber, setPhoneNumber] = useState('')
   const [formattedPhoneNumber, setFormattedPhoneNumber] = useState('')
   const [password, setPassword] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
   const { showToast, isToastVisible, toastTitle } = useToast()
+  const { isLoading, send } = useAsyncRequest()
 
   const onSubmit = async () => {
-    try {
-      setIsLoading(true)
-      await signup({ email, password, phoneNumber: formattedPhoneNumber })
-    } catch (err) {
-      if (err.message === 'INVALID_EMAIL') return showToast('Nieprawidłowy email')
-      if (err.message === 'INVALID_PHONE') return showToast('Nieprawidłowy numer telefonu')
-      if (err.message === 'INVALID_PASSWORD') return showToast('Hasło musi mieć przynajmniej 6 znaków')
+    send(
+      async () => {
+        await signup({ email, password, phoneNumber: formattedPhoneNumber })
+      },
+      err => {
+        if (err.message === 'INVALID_EMAIL') return showToast('Nieprawidłowy email')
+        if (err.message === 'INVALID_PHONE') return showToast('Nieprawidłowy numer telefonu')
+        if (err.message === 'INVALID_PASSWORD') return showToast('Hasło musi mieć przynajmniej 6 znaków')
 
-      if (err.response && err.response.status === 400) {
-        //email already in use
-        return showToast('Ten email jest używany przez inne konto')
+        if (err.response && err.response.status === 400) {
+          //email already in use
+          return showToast('Ten adres email jest już używany przez inne konto')
+        }
       }
-    } finally {
-      setIsLoading(false)
-    }
+    )
   }
 
   return (

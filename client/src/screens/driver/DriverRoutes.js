@@ -3,11 +3,12 @@ import appApi from '../../api/appApi'
 import { useEffect, useState } from 'react'
 import RouteItem from '../../components/RouteItem'
 import { useIsFocused } from '@react-navigation/native'
-import { ActivityIndicator, View } from 'react-native'
+import { View } from 'react-native'
 import MapModal from '../../components/modals/MapModal'
 import BackgroundTracking from '../../components/driver/BackgroundTracking'
 import { Marker } from 'react-native-maps'
 import RouteNavigation from '../../components/driver/RouteNavigation'
+import Loader from '../../components/Loader'
 
 const DriverRoutes = () => {
   const [route, setRoute] = useState()
@@ -109,7 +110,7 @@ const DriverRoutes = () => {
           </View>
           {isLoading ? (
             <View className="w-full h-[200px] items-center justify-center">
-              <ActivityIndicator />
+              <Loader />
             </View>
           ) : (
             <RouteItem

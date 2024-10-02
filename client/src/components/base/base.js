@@ -1,12 +1,15 @@
-import { TouchableOpacity, Text, View, TextInput, ActivityIndicator } from 'react-native'
+import { TouchableOpacity, Text, View, TextInput } from 'react-native'
 import { useEffect } from 'react'
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons'
 import Animated, { useSharedValue, withTiming, useAnimatedStyle } from 'react-native-reanimated'
 import colors from '../../../colors'
+import { smallShadow } from '../../../shadow'
+import Loader from '../Loader'
 
 export const BaseButton = ({ alt = false, title = 'Przycisk', onPress = () => {}, isLoading = false }) => {
   return (
     <TouchableOpacity
+      style={smallShadow}
       className={
         alt
           ? 'bg-transparent border border-darkGray items-center justify-center rounded-md mb-2 h-10'
@@ -14,7 +17,7 @@ export const BaseButton = ({ alt = false, title = 'Przycisk', onPress = () => {}
       }
       onPress={onPress}
     >
-      {isLoading ? <ActivityIndicator /> : <Text className="font-semibold text-darkGray">{title}</Text>}
+      {isLoading ? <Loader /> : <Text className="font-semibold text-darkGray">{title}</Text>}
     </TouchableOpacity>
   )
 }
@@ -103,6 +106,14 @@ export const BaseSwitch = ({ value, onPress, disabled }) => {
         ></Animated.View>
       </Animated.View>
     </TouchableOpacity>
+  )
+}
+
+export const BaseTile = ({ children }) => {
+  return (
+    <View className="p-4 bg-lightGray rounded-md" style={smallShadow}>
+      {children}
+    </View>
   )
 }
 

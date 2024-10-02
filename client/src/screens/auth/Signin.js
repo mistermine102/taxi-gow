@@ -1,26 +1,25 @@
-import { View, Text } from 'react-native'
+import { View} from 'react-native'
 import { useState, useContext } from 'react'
 import AuthContext from '../../context/Auth'
 import { BaseInput, BaseButton, BaseLink, ScreenWrapper, BaseTitle } from '../../components/base/base'
 import Toast from '../../components/Toast'
 import useToast from '../../hooks/useToast'
+import useAsyncRequest from '../../hooks/useAsyncRequest'
 
 const SigninScreen = ({ navigation }) => {
   const { signin } = useContext(AuthContext)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
   const { isToastVisible, toastTitle, showToast } = useToast()
+  const { send, isLoading } = useAsyncRequest()
 
   const onSubmit = async () => {
-    try {
-      setIsLoading(true)
-      await signin({ email, password })
-    } catch (err) {
-      showToast('Nieprawidłowy email lub hasło')
-    } finally {
-      setIsLoading(false)
-    }
+    send(
+      async () => {
+        await signin({ email, password })
+      },
+      () => showToast('Nieprawidłowy email lub hasło')
+    )
   }
 
   return (

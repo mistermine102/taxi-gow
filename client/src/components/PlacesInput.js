@@ -2,6 +2,7 @@ import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplet
 import { View } from 'react-native'
 import { useEffect, useState } from 'react'
 import useLocation from '../hooks/useLocation'
+import { SERVICED_AREA_CENTER, SERVICED_AREA_RADIUS } from '../../servicedArea'
 
 const PlacesInput = ({ placeholder, onPlaceSelect }) => {
   const { location } = useLocation()
@@ -30,8 +31,9 @@ const PlacesInput = ({ placeholder, onPlaceSelect }) => {
           key: process.env.GOOGLE_PLACES_API_KEY,
           language: 'pl',
           rankby: 'distance',
-          radius: 20000,
-          location: parsedLocation,
+          radius: SERVICED_AREA_RADIUS,
+          strictbounds: true,
+          location: `${SERVICED_AREA_CENTER.latitude}, ${SERVICED_AREA_CENTER.longitude}`,
         }}
       />
     </View>
