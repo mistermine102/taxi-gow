@@ -1,9 +1,9 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { BaseLink } from '../base/base'
 import MapModal from '../modals/MapModal'
 import { View } from 'react-native'
 import { SERVICED_AREA_CENTER, SERVICED_AREA_RADIUS } from '../../../servicedArea'
-import { Circle } from 'react-native-maps'
+import MapView, { Circle } from 'react-native-maps'
 import colors from '../../../colors'
 
 const CheckServicedArea = () => {

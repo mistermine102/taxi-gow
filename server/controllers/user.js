@@ -29,3 +29,11 @@ exports.toggleAvailability = async (req, res) => {
 
   res.json(req.user)
 }
+
+exports.updateCurrentLocation = async (req, res) => {
+  const { location } = req.body
+
+  const user = await User.findByIdAndUpdate(req.user._id, { currentLocation: location }, { new: true })
+
+  res.json({ location: user.currentLocation })
+}

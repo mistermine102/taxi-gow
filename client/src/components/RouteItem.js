@@ -1,5 +1,5 @@
 import { View, Text } from 'react-native'
-import { BaseIcon } from './base/base'
+import { BaseIcon, BaseTile } from './base/base'
 
 const RouteItem = ({ children, name, status, destination, origin }) => {
   const { text: textColor, background: bgColor } = status.colors
@@ -7,9 +7,9 @@ const RouteItem = ({ children, name, status, destination, origin }) => {
   // const bgColor = '#e9d5ff'
 
   return (
-    <View className="bg-lightGray rounded-md p-4">
+    <BaseTile>
       <View className="flex-row items-center justify-between mb-2">
-        <Text className="text-xl font-semibold">{`${name.slice(0, 20)}${name.length > 20 ? '...' : ''}`}</Text>
+        <Text className="text-xl font-semibold">{`${name.slice(0, 18)}${name.length > 18 ? '...' : ''}`}</Text>
         <View style={{ backgroundColor: bgColor }} className="px-2 py-1 rounded-full">
           <Text style={{ color: textColor }} className="font-semibold">
             {status.title}
@@ -26,7 +26,7 @@ const RouteItem = ({ children, name, status, destination, origin }) => {
       </View>
       {/* controls */}
       <View>{children}</View>
-    </View>
+    </BaseTile>
   )
 }
 

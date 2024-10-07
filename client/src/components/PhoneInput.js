@@ -7,14 +7,13 @@ const PhoneInput = ({ value = '', onChangeFormattedText = () => {}, onChangeText
       containerStyle={{
         backgroundColor: colors.lightGray,
         borderRadius: 6,
-        paddingVertical: 3,
         width: '100%',
         marginBottom: 16,
       }}
       textContainerStyle={{
         backgroundColor: colors.lightGray,
-        paddingBottom: 0,
-        paddingTop: 0,
+        paddingBottom: 12,
+        paddingTop: 12,
         borderTopRightRadius: 6,
         borderBottomRightRadius: 6,
       }}

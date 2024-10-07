@@ -105,7 +105,7 @@ const DriverTrackScreen = ({ navigation }) => {
         origin={route.clientOrigin.address}
         destination={route.destination.address}
       >
-        <BaseButton title="Śledź kierowcę" onPress={openModal} />
+        <BaseButton shadow={false} title="Śledź kierowcę" onPress={openModal} />
       </RouteItem>
     </ScreenWrapper>
   )

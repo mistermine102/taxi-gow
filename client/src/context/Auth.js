@@ -88,7 +88,12 @@ export const Provider = ({ children }) => {
     } catch (err) {
       //handle error
       console.log('cannot sign in')
-      console.log(err)
+      console.log(err.response)
+
+      if (err.response && err.response.status === 401) {
+        await AsyncStorage.removeItem('token')
+        navigate('AuthStack')
+      }
     }
   }
 

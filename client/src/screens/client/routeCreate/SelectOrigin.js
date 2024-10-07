@@ -47,7 +47,7 @@ const SelectOrigin = ({ navigation }) => {
       <CheckServicedArea />
       {origin ? (
         <View className="mt-8">
-          <Map rounded directions={{ origin: origin.coords }} />
+          <Map rounded region={{ latitude: 17, longitude: 52, latitudeDelta: 0.5, longitudeDelta: 0.5 }} directions={{ origin: origin.coords }} />
           <View className="mt-4">
             <BaseButton title="Kontynuuj" onPress={() => navigation.navigate('SelectDestination')} />
           </View>

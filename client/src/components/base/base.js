@@ -6,10 +6,9 @@ import colors from '../../../colors'
 import { smallShadow } from '../../../shadow'
 import Loader from '../Loader'
 
-export const BaseButton = ({ alt = false, title = 'Przycisk', onPress = () => {}, isLoading = false }) => {
+export const BaseButton = ({ shadow = true, alt = false, title = 'Przycisk', onPress = () => {}, isLoading = false }) => {
   return (
     <TouchableOpacity
-      style={smallShadow}
       className={
         alt
           ? 'bg-transparent border border-darkGray items-center justify-center rounded-md mb-2 h-10'
