@@ -15,6 +15,10 @@ const schema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  activeRoute: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Route',
+  },
   hasActiveRoute: Boolean,
   isAvailable: Boolean,
   pricing: {
@@ -33,16 +37,21 @@ const schema = new mongoose.Schema({
       speed: Number,
     },
   },
+  websocket: {
+    id: String,
+    isConnected: Boolean,
+  },
 })
 
 schema.methods.transform = function () {
-  const { _id, email, phoneNumber, role } = this
+  const { _id, email, phoneNumber, role, activeRoute } = this
 
   return {
     _id,
     email,
     role,
     phoneNumber,
+    activeRoute,
   }
 }
 

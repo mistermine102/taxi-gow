@@ -7,9 +7,9 @@ const calculateDistances = require('../utils/calculateDistances')
 const AppError = require('../classes/AppError')
 const parseCoords = require('../utils/parseCoords')
 const calculateTotalCost = require('../utils/calculateTotalCost')
+const socket = require('../socket/index')
 
 exports.createRoute = async (req, res) => {
-  return res.json('test')
   //1. server gets origin, destination and driverId from client (done)
   //2. server calculates route's price based on those 3 pieces of information (done)
   //3. server creates payment and sends payment id to the client
@@ -97,6 +97,16 @@ exports.createRoute = async (req, res) => {
   //change driver's isAvailable
   foundDriver.isAvailable = false
   foundDriver.hasActiveRoute = true
+
+  //change client's and driver's active route
+  foundDriver.activeRoute = newRoute._id
+  await User.findByIdAndUpdate(newRoute.clientId, { activeRoute: newRoute._id })
+
+  //emit websocket updates (to client and to driver)
+  //check if driver and/or client are connected via websocket
+  //send
+  //...
+
   await foundDriver.save()
 
   res.json({ route: newRoute })
@@ -149,7 +159,9 @@ exports.changeRouteStatus = async (req, res) => {
       await archivedRoute.save()
 
       //change driver's isAvailable
-      await User.findByIdAndUpdate(route.driverId, { isAvailable: true, hasActiveRoute: false })
+      //change driver's and client's active route
+      await User.findByIdAndUpdate(route.driverId, { isAvailable: true, hasActiveRoute: false, activeRoute: null })
+      await User.findByIdAndUpdate(route.clientId, { activeRoute: null })
       break
     default:
       break

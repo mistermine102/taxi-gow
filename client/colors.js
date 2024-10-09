@@ -3,5 +3,6 @@ module.exports = {
   darkGray: '#4D4D4D',
   lightGray: '#EDEDED',
   activeTab: '#F3D464',
-  inActiveTab: '#d1d5db',
+  inActiveTab: '#9ca3af',
+  disabledTab: '#d1d5db'
 }

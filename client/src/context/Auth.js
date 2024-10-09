@@ -3,6 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import appApi from '../api/appApi'
 import { navigate } from '../RootNavigation'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
+import socket from '../socket'
 
 const Context = createContext()
 
@@ -18,6 +19,8 @@ const reducer = (state, { type, payload }) => {
   switch (type) {
     case 'set_user':
       return { ...state, user: payload }
+    case 'set_route':
+      return { ...state, route: payload }
     default:
       return state
   }
@@ -34,6 +37,9 @@ export const Provider = ({ children }) => {
         email,
         password,
       })
+
+      //authenticate web socket connection
+      socket.emit('authenticate', response.data.token)
 
       //store token in async storage
       await AsyncStorage.setItem('token', response.data.token)
@@ -63,6 +69,10 @@ export const Provider = ({ children }) => {
         password,
         phoneNumber,
       })
+
+      //authenticate web socket connection
+      socket.emit('authenticate', response.data.token)
+
       //store token in async storage
       await AsyncStorage.setItem('token', response.data.token)
 
@@ -82,6 +92,10 @@ export const Provider = ({ children }) => {
       if (!token) return navigate('AuthStack')
 
       const response = await appApi.get('/user')
+
+      //authenticate web socket connection
+      socket.emit('authenticate', token)
+
       dispatch({ type: 'set_user', payload: response.data.user })
 
       navigate('MainTab')
@@ -101,6 +115,14 @@ export const Provider = ({ children }) => {
     await AsyncStorage.removeItem('token')
     dispatch({ type: 'set_user', payload: null })
     navigate('AuthStack')
+  }
+
+  const setUpListeners = () => {
+    socket.on('routeCreated', () => {})
+
+    socket.on('routeStatusChanged', status => {
+      console.log(status)
+    })
   }
 
   return <Context.Provider value={{ signin, signup, signout, tryLocalSignin, user }}>{children}</Context.Provider>

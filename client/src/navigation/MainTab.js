@@ -4,27 +4,30 @@ import { useContext } from 'react'
 import TrackDriverScreen from '../screens/client/TrackDriver'
 import DriverRoutesScreen from '../screens/driver/DriverRoutes'
 import AccountScreen from '../screens/Account'
-import { Image } from 'react-native'
-import { logo } from '../images/index'
 import { BaseIcon } from '../components/base/base'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import colors from '../../colors'
+import Toast from 'react-native-toast-message'
 
 const Tab = createBottomTabNavigator()
 
 const ACTIVE_TAB_COLOR = colors.activeTab
 const INACTIVE_TAB_COLOR = colors.inActiveTab
+const DISABLED_TAB_COLOR = colors.disabledTab
 
 const MainTabNavigator = () => {
   const { user } = useContext(AuthContext)
-
   if (!user) return null
+
+  const { activeRoute } = user
 
   return (
     <Tab.Navigator
       screenOptions={{
         // headerLeft: () => <Image source={logo} style={{ height: 48, width: 64, alignItems: 'center', justifyContent: 'center', marginLeft: 8 }} />,
         headerTitleStyle: { color: colors.darkGray },
+        tabBarActiveTintColor: ACTIVE_TAB_COLOR,
+        tabBarInactiveTintColor: INACTIVE_TAB_COLOR,
       }}
       initialRouteName="RouteCreateStack"
     >
@@ -34,8 +37,6 @@ const MainTabNavigator = () => {
             options={{
               title: 'Śledź kierowcę',
               tabBarLabel: 'Śledź kierowcę',
-              tabBarActiveTintColor: ACTIVE_TAB_COLOR,
-              tabBarInactiveTintColor: INACTIVE_TAB_COLOR,
               tabBarLabelStyle: { fontWeight: 'bold' },
               tabBarIcon: ({ focused }) => <BaseIcon name="map-marker-account" color={focused ? ACTIVE_TAB_COLOR : INACTIVE_TAB_COLOR} />,
             }}
@@ -43,13 +44,29 @@ const MainTabNavigator = () => {
             component={TrackDriverScreen}
           />
           <Tab.Screen
-            options={{
-              headerShown: false,
-              tabBarLabel: 'Zamów',
-              tabBarActiveTintColor: ACTIVE_TAB_COLOR,
-              tabBarInactiveTintColor: INACTIVE_TAB_COLOR,
-              tabBarLabelStyle: { fontWeight: 'bold' },
-              tabBarIcon: ({ focused }) => <BaseIcon name="human-greeting-variant" color={focused ? ACTIVE_TAB_COLOR : INACTIVE_TAB_COLOR} />,
+            listeners={{
+              tabPress: e => {
+                if (activeRoute) {
+                  e.preventDefault()
+                  Toast.show({ type: 'error', text1: 'Zamówiłeś już kierowcę' })
+                }
+              },
+            }}
+            options={({ navigation }) => {
+              //that's the only tab that can have 3 possible states (disabled, active, inactive)
+              const isFocused = navigation.isFocused()
+
+              return {
+                headerShown: false,
+                tabBarLabel: 'Zamów',
+                tabBarLabelStyle: { fontWeight: 'bold', color: activeRoute ? DISABLED_TAB_COLOR : isFocused ? ACTIVE_TAB_COLOR : INACTIVE_TAB_COLOR },
+                tabBarIcon: () => (
+                  <BaseIcon
+                    name="human-greeting-variant"
+                    color={activeRoute ? DISABLED_TAB_COLOR : isFocused ? ACTIVE_TAB_COLOR : INACTIVE_TAB_COLOR}
+                  />
+                ),
+              }
             }}
             name="RouteCreateStack"
             component={RouteCreateNavigator}
@@ -59,8 +76,6 @@ const MainTabNavigator = () => {
         <Tab.Screen
           options={{
             title: 'Trasy',
-            tabBarActiveTintColor: ACTIVE_TAB_COLOR,
-            tabBarInactiveTintColor: INACTIVE_TAB_COLOR,
             tabBarLabelStyle: { fontWeight: 'bold' },
             tabBarIcon: ({ focused }) => <BaseIcon name="map" color={focused ? ACTIVE_TAB_COLOR : INACTIVE_TAB_COLOR} />,
           }}

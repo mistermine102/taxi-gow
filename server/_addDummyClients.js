@@ -23,6 +23,7 @@ const addDummyClients = async (req, res) => {
       email: clientsEmails[i],
       password,
       phoneNumber: '+48532395944',
+      activeRoute: null,
       role: 'client',
     })
     client.save()

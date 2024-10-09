@@ -1,16 +1,14 @@
-import { View} from 'react-native'
+import { View } from 'react-native'
 import { useState, useContext } from 'react'
 import AuthContext from '../../context/Auth'
 import { BaseInput, BaseButton, BaseLink, ScreenWrapper, BaseTitle } from '../../components/base/base'
-import Toast from '../../components/Toast'
-import useToast from '../../hooks/useToast'
 import useAsyncRequest from '../../hooks/useAsyncRequest'
+import Toast from 'react-native-toast-message'
 
 const SigninScreen = ({ navigation }) => {
   const { signin } = useContext(AuthContext)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const { isToastVisible, toastTitle, showToast } = useToast()
   const { send, isLoading } = useAsyncRequest()
 
   const onSubmit = async () => {
@@ -18,13 +16,12 @@ const SigninScreen = ({ navigation }) => {
       async () => {
         await signin({ email, password })
       },
-      () => showToast('Nieprawidłowy email lub hasło')
+      () => Toast.show({ type: 'error', text1: 'Błąd logowania', text2: 'Nieprawidłowy email lub hasło' })
     )
   }
 
   return (
     <ScreenWrapper>
-      <Toast isVisible={isToastVisible} title={toastTitle} />
       <View className="mt-8">
         <BaseTitle>Witaj ponownie!</BaseTitle>
       </View>

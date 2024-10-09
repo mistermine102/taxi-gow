@@ -3,11 +3,13 @@ require('dotenv').config()
 //models
 require('./models/User')
 require('./models/Route')
-require("./models/Status")
+require('./models/Status')
 
 //packages
 const express = require('express')
 const mongoose = require('mongoose')
+const http = require('http')
+const socket = require('./socket/index')
 
 //other imports
 const errorHandler = require('./middleware/errorHandler')
@@ -39,8 +41,11 @@ app.all('*', (req, res) => {
 //error handler
 app.use(errorHandler)
 
-//app
-app.listen(3000, () => {
+const server = http.createServer(app)
+
+socket.connect(server)
+
+server.listen(3000, () => {
   mongoose
     .connect(process.env.DB_URI)
     .then(() => console.log('Connected to database'))

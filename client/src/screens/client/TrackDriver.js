@@ -18,7 +18,7 @@ const DriverTrackScreen = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(false)
 
   const navigateToRouteCreate = () => {
-    navigation.navigate('SelectOrigin')
+    navigation.navigate('RouteCreateStack')
   }
 
   const openModal = async () => {
@@ -41,8 +41,8 @@ const DriverTrackScreen = ({ navigation }) => {
         const response = await appApi.get('/users/route')
 
         setRoute(response.data.route)
-      } catch (error) {
-        console.log(error)
+      } catch (err) {
+        console.log(err)
       } finally {
         setIsLoading(false)
       }

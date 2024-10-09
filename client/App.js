@@ -1,4 +1,6 @@
 import 'react-native-gesture-handler'
+import Toast from 'react-native-toast-message'
+import toastConfig from './src/toastConfig'
 
 //navigation
 import AuthStackNavigator from './src/navigation/AuthStack'
@@ -20,14 +22,17 @@ const Stack = createNativeStackNavigator()
 
 const App = () => {
   return (
-    <NavigationContainer ref={navigationRef}>
-      <Stack.Navigator screenOptions={{ gestureEnabled: false }}>
-        <Stack.Screen options={{ headerShown: false }} name="ResolveAuth" component={ResolveAuthScreen} />
-        <Stack.Screen options={{ headerShown: false }} name="AuthStack" component={AuthStackNavigator} />
-        <Stack.Screen options={{ headerShown: false }} name="MainTab" component={MainTabNavigator} />
-        <Stack.Screen options={{ headerShown: false }} name="Success" component={SuccessScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <>
+      <NavigationContainer ref={navigationRef}>
+        <Stack.Navigator screenOptions={{ gestureEnabled: false }}>
+          <Stack.Screen options={{ headerShown: false }} name="ResolveAuth" component={ResolveAuthScreen} />
+          <Stack.Screen options={{ headerShown: false }} name="AuthStack" component={AuthStackNavigator} />
+          <Stack.Screen options={{ headerShown: false }} name="MainTab" component={MainTabNavigator} />
+          <Stack.Screen options={{ headerShown: false }} name="Success" component={SuccessScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+      <Toast config={toastConfig} visibilityTime={3000} />
+    </>
   )
 }
 

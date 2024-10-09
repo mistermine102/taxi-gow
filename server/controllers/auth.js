@@ -1,6 +1,7 @@
 const AppError = require('../classes/AppError')
 const mongoose = require('mongoose')
 const User = mongoose.model('User')
+const Route = mongoose.model('Route')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
@@ -19,6 +20,7 @@ exports.signup = async (req, res) => {
     email,
     password: hashedPassword,
     phoneNumber,
+    activeRoute: null,
     role: 'client',
   })
   await newUser.save()
@@ -58,8 +60,10 @@ exports.signin = async (req, res) => {
   })
 }
 
-exports.getUser = (req, res) => {
+exports.getUser = async (req, res) => {
   const transformedUser = req.user.transform()
+
+  transformedUser.activeRoute = await Route.findById(transformedUser.activeRoute)
 
   res.json({
     user: transformedUser,
