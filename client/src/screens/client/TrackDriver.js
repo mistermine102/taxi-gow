@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useContext } from 'react'
 import { ScreenWrapper, BaseTitle, BaseButton } from '../../components/base/base'
 import { View, Image } from 'react-native'
 import appApi from '../../api/appApi'
@@ -9,13 +9,15 @@ import { Marker } from 'react-native-maps'
 import { BaseIcon } from '../../components/base/base'
 import { noRoute } from '../../images/index'
 import Loader from '../../components/Loader'
+import AuthContext from '../../context/Auth'
 
 const DriverTrackScreen = ({ navigation }) => {
   const isFocused = useIsFocused()
-  const [route, setRoute] = useState()
+  // const [route, setRoute] = useState()
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [driverLocation, setDriverLocation] = useState()
   const [isLoading, setIsLoading] = useState(false)
+  const { user } = useContext(AuthContext)
 
   const navigateToRouteCreate = () => {
     navigation.navigate('RouteCreateStack')
@@ -32,34 +34,34 @@ const DriverTrackScreen = ({ navigation }) => {
     }
   }
 
-  useEffect(() => {
-    if (!isFocused) return
+  // useEffect(() => {
+  //   if (!isFocused) return
 
-    const getRoute = async () => {
-      try {
-        setIsLoading(true)
-        const response = await appApi.get('/users/route')
+  //   const getRoute = async () => {
+  //     try {
+  //       setIsLoading(true)
+  //       const response = await appApi.get('/users/route')
 
-        setRoute(response.data.route)
-      } catch (err) {
-        console.log(err)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-    getRoute()
-  }, [isFocused])
+  //       setRoute(response.data.route)
+  //     } catch (err) {
+  //       console.log(err)
+  //     } finally {
+  //       setIsLoading(false)
+  //     }
+  //   }
+  //   getRoute()
+  // }, [isFocused])
 
-  if (isLoading)
-    return (
-      <ScreenWrapper>
-        <View className="w-full h-[200px] justify-center items-center">
-          <Loader />
-        </View>
-      </ScreenWrapper>
-    )
+  // if (isLoading)
+  //   return (
+  //     <ScreenWrapper>
+  //       <View className="w-full h-[200px] justify-center items-center">
+  //         <Loader />
+  //       </View>
+  //     </ScreenWrapper>
+  //   )
 
-  if (!route)
+  if (!user.activeRoute)
     return (
       <ScreenWrapper>
         <View className="items-center mt-8">
@@ -100,10 +102,10 @@ const DriverTrackScreen = ({ navigation }) => {
       </View>
       <RouteItem
         userType="client"
-        name={route.driverId}
-        status={route.status}
-        origin={route.clientOrigin.address}
-        destination={route.destination.address}
+        name={user.activeRoute.driverId}
+        status={user.activeRoute.status}
+        origin={user.activeRoute.clientOrigin.address}
+        destination={user.activeRoute.destination.address}
       >
         <BaseButton shadow={false} title="Śledź kierowcę" onPress={openModal} />
       </RouteItem>

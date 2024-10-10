@@ -19,8 +19,8 @@ const reducer = (state, { type, payload }) => {
   switch (type) {
     case 'set_user':
       return { ...state, user: payload }
-    case 'set_route':
-      return { ...state, route: payload }
+    case 'update_route_status':
+      return { ...state, user: { ...state.user, activeRoute: { ...state.user.activeRoute, status: payload } } }
     default:
       return state
   }
@@ -117,15 +117,11 @@ export const Provider = ({ children }) => {
     navigate('AuthStack')
   }
 
-  const setUpListeners = () => {
-    socket.on('routeCreated', () => {})
-
-    socket.on('routeStatusChanged', status => {
-      console.log(status)
-    })
+  const updateRouteStatus = newStatus => {
+    dispatch({ type: 'update_route_status', payload: newStatus })
   }
 
-  return <Context.Provider value={{ signin, signup, signout, tryLocalSignin, user }}>{children}</Context.Provider>
+  return <Context.Provider value={{ signin, signup, signout, tryLocalSignin, user, updateRouteStatus }}>{children}</Context.Provider>
 }
 
 export default Context

@@ -117,6 +117,8 @@ exports.changeRouteStatus = async (req, res) => {
   const { newStatusId } = req.body
 
   const route = await Route.findById(routeId)
+  const client = await User.findById(route.clientId)
+  const driver = await User.findById(route.driverId)
 
   //check if user is the driver of the route
   if (!route.driverId.equals(req.user._id)) throw new AppError("Can't modify this route", 401)
@@ -158,16 +160,36 @@ exports.changeRouteStatus = async (req, res) => {
 
       await archivedRoute.save()
 
-      //change driver's isAvailable
-      //change driver's and client's active route
-      await User.findByIdAndUpdate(route.driverId, { isAvailable: true, hasActiveRoute: false, activeRoute: null })
-      await User.findByIdAndUpdate(route.clientId, { activeRoute: null })
+      //update driver
+      driver.isAvailable = true
+      driver.hasActiveRoute = false
+      driver.activeRoute = null
+      await driver.save()
+
+      //update client
+      client.activeRoute = null
+      await client.save()
+
       break
     default:
       break
   }
 
+  //save or remove (archive) the route
   newStatusId === 5 ? await route.deleteOne() : await route.save()
+
+  //emit websocket event
+  const io = socket.get()
+
+  //notify the client
+  if (client.websocket && client.websocket.isConnected) {
+    io.to(client.websocket.id).emit('routeStatusChanged', status)
+  }
+
+  //notify the driver
+  if (driver.websocket && driver.websocket.isConnected) {
+    io.to(driver.websocket.id).emit('routeStatusChanged', status)
+  }
 
   res.json({ route })
 }
