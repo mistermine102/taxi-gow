@@ -30,6 +30,7 @@ exports.signup = async (req, res) => {
 
   //transform user (strip unnecessary information like password etc)
   const transformedUser = newUser.transform()
+  transformedUser.activeRoute = await Route.findById(transformedUser.activeRoute)
 
   res.json({
     token,
@@ -53,6 +54,7 @@ exports.signin = async (req, res) => {
 
   //transform user (strip unnecessary information like password etc)
   const transformedUser = user.transform()
+  transformedUser.activeRoute = await Route.findById(transformedUser.activeRoute)
 
   res.json({
     token,
@@ -62,7 +64,6 @@ exports.signin = async (req, res) => {
 
 exports.getUser = async (req, res) => {
   const transformedUser = req.user.transform()
-
   transformedUser.activeRoute = await Route.findById(transformedUser.activeRoute)
 
   res.json({

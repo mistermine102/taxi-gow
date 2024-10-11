@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import Toast from 'react-native-toast-message'
 
 export default () => {
   const [isLoading, setIsLoading] = useState(false)
@@ -8,7 +9,15 @@ export default () => {
       setIsLoading(true)
       await fn()
     } catch (err) {
-      errHandler(err)
+      if (errHandler) {
+        errHandler(err)
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: 'Coś poszło nie tak',
+          text2: 'Wystąpił błąd, spróbuj ponownie później ',
+        })
+      }
     } finally {
       setIsLoading(false)
     }

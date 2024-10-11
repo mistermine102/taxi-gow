@@ -35,7 +35,7 @@ app.use('/users', usersRoutes)
 
 //invalid route
 app.all('*', (req, res) => {
-  res.json({ message: 'Invalid route' })
+  res.status(404).json({ message: 'Invalid route' })
 })
 
 //error handler
@@ -49,6 +49,6 @@ server.listen(3000, () => {
   mongoose
     .connect(process.env.DB_URI)
     .then(() => console.log('Connected to database'))
-    .catch(err => console.log("Can't connect to database"))
+    .catch((err) => console.log("Can't connect to database"))
   console.log('Server listening on port 3000')
 })

@@ -4,7 +4,7 @@ import {
   BaseTitle,
   BaseButton,
 } from '../../components/base/base'
-import { View, Image } from 'react-native'
+import { View, Image, TouchableOpacity } from 'react-native'
 import appApi from '../../api/appApi'
 import RouteItem from '../../components/RouteItem'
 import MapModal from '../../components/modals/MapModal'
@@ -12,11 +12,14 @@ import { Marker } from 'react-native-maps'
 import { BaseIcon } from '../../components/base/base'
 import { noRoute } from '../../images/index'
 import AuthContext from '../../context/Auth'
+import useAsyncRequest from '../../hooks/useAsyncRequest'
+import Loader from '../../components/Loader'
 
 const DriverTrackScreen = ({ navigation }) => {
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [driverLocation, setDriverLocation] = useState()
-  const { user } = useContext(AuthContext)
+  const refreshRoutes = useAsyncRequest()
+  const { user, updateActiveRoute } = useContext(AuthContext)
   const { activeRoute: route } = user
 
   const navigateToRouteCreate = () => {
@@ -26,12 +29,18 @@ const DriverTrackScreen = ({ navigation }) => {
   const openModal = async () => {
     try {
       setIsModalVisible(true)
-
       const response = await appApi.get('/users/route/driver/location')
       setDriverLocation(response.data.coords)
     } catch (err) {
       console.log(err)
     }
+  }
+
+  const handleRefreshPress = async () => {
+    refreshRoutes.send(async () => {
+      const response = await appApi.get('/users/route')
+      updateActiveRoute(response.data.route)
+    })
   }
 
   if (!route)
@@ -82,18 +91,29 @@ const DriverTrackScreen = ({ navigation }) => {
         btnCaption="Wróć"
         title="Śledź kierowcę"
       />
-      <View className="mt-16 mb-4">
+      <View className="mt-16 mb-4 flex-row justify-between">
         <BaseTitle>Trasy</BaseTitle>
+        <TouchableOpacity onPress={handleRefreshPress}>
+          <BaseIcon name="refresh" />
+        </TouchableOpacity>
       </View>
-      <RouteItem
-        userType="client"
-        name={route.driverId}
-        status={route.status}
-        origin={route.clientOrigin.address}
-        destination={route.destination.address}
-      >
-        <BaseButton shadow={false} title="Śledź kierowcę" onPress={openModal} />
-      </RouteItem>
+      {refreshRoutes.isLoading ? (
+        <Loader size='large' />
+      ) : (
+        <RouteItem
+          userType="client"
+          name={route.driverId}
+          status={route.status}
+          origin={route.clientOrigin.address}
+          destination={route.destination.address}
+        >
+          <BaseButton
+            shadow={false}
+            title="Śledź kierowcę"
+            onPress={openModal}
+          />
+        </RouteItem>
+      )}
     </ScreenWrapper>
   )
 }
