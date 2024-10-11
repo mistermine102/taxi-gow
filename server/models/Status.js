@@ -5,6 +5,7 @@ const schema = new mongoose.Schema(
     _id: Number,
     title: String,
     message: String,
+    action: String,
     colors: {
       text: String,
       background: String,
@@ -16,4 +17,3 @@ const schema = new mongoose.Schema(
 mongoose.model('Status', schema)
 
 module.exports = schema
-

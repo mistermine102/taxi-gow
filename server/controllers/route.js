@@ -7,7 +7,7 @@ const calculateDistances = require('../utils/calculateDistances')
 const AppError = require('../classes/AppError')
 const parseCoords = require('../utils/parseCoords')
 const calculateTotalCost = require('../utils/calculateTotalCost')
-const socket = require('../socket/index')
+const emitWsEvent = require('../utils/emitWsEvent')
 
 exports.createRoute = async (req, res) => {
   //1. server gets origin, destination and driverId from client (done)
@@ -30,11 +30,15 @@ exports.createRoute = async (req, res) => {
   if (!foundDriver) throw new AppError('Cannot find driver with that id', 400)
   if (!foundDriver.isAvailable) throw new AppError('Driver not available', 400)
 
-  const { latitude: driverLatitude, longitude: driverLongitude } = foundDriver.currentLocation.coords
+  const { latitude: driverLatitude, longitude: driverLongitude } =
+    foundDriver.currentLocation.coords
   const driverOrigin = `${driverLatitude}, ${driverLongitude}`
 
   //calculate distances
-  const distancesData = await calculateDistances([clientOrigin, driverOrigin], [destination, clientOrigin])
+  const distancesData = await calculateDistances(
+    [clientOrigin, driverOrigin],
+    [destination, clientOrigin]
+  )
 
   const clientAddress = distancesData.origin_addresses[0]
   const driverAddress = distancesData.origin_addresses[1]
@@ -44,14 +48,16 @@ exports.createRoute = async (req, res) => {
   const driverToClient = distancesData.rows[1].elements[1]
 
   //determine route's total length
-  const totalDistanceMeters = driverToClient.distance.value + clientToDestination.distance.value
+  const totalDistanceMeters =
+    driverToClient.distance.value + clientToDestination.distance.value
   const totalDistanceKm = parseFloat((totalDistanceMeters / 1000).toFixed(1))
 
   //determine route's total price
   const totalCost = calculateTotalCost(foundDriver.pricing, totalDistanceKm)
 
   //determine estimated duration
-  const totalSeconds = driverToClient.duration.value + clientToDestination.duration.value
+  const totalSeconds =
+    driverToClient.duration.value + clientToDestination.duration.value
   const totalMinutes = Math.ceil(totalSeconds / 60)
 
   //find route status
@@ -100,13 +106,17 @@ exports.createRoute = async (req, res) => {
 
   //change client's and driver's active route
   foundDriver.activeRoute = newRoute._id
-  await User.findByIdAndUpdate(newRoute.clientId, { activeRoute: newRoute._id })
+
+  const client = await User.findById(newRoute.clientId)
+  client.activeRoute = newRoute._id
 
   //emit websocket updates (to client and to driver)
-  //check if driver and/or client are connected via websocket
-  //send
-  //...
+  emitWsEvent({ name: 'routeCreated', payload: newRoute }, [
+    foundDriver,
+    client,
+  ])
 
+  await client.save()
   await foundDriver.save()
 
   res.json({ route: newRoute })
@@ -121,7 +131,8 @@ exports.changeRouteStatus = async (req, res) => {
   const driver = await User.findById(route.driverId)
 
   //check if user is the driver of the route
-  if (!route.driverId.equals(req.user._id)) throw new AppError("Can't modify this route", 401)
+  if (!route.driverId.equals(req.user._id))
+    throw new AppError("Can't modify this route", 401)
 
   //update route status
   const status = await Status.findById(newStatusId)
@@ -149,8 +160,12 @@ exports.changeRouteStatus = async (req, res) => {
 
       //caclulate actual route duration
       //finishedAt - startedAt
-      const actualDurationInMiliseconds = Math.abs(route.meta.finishedAt - route.meta.startedAt)
-      const actualDurationInMinutes = Math.ceil(actualDurationInMiliseconds / 1000 / 60)
+      const actualDurationInMiliseconds = Math.abs(
+        route.meta.finishedAt - route.meta.startedAt
+      )
+      const actualDurationInMinutes = Math.ceil(
+        actualDurationInMiliseconds / 1000 / 60
+      )
       route.duration.actual = parseInt(actualDurationInMinutes)
 
       //push the route to the archives
@@ -178,18 +193,8 @@ exports.changeRouteStatus = async (req, res) => {
   //save or remove (archive) the route
   newStatusId === 5 ? await route.deleteOne() : await route.save()
 
-  //emit websocket event
-  const io = socket.get()
-
-  //notify the client
-  if (client.websocket && client.websocket.isConnected) {
-    io.to(client.websocket.id).emit('routeStatusChanged', status)
-  }
-
-  //notify the driver
-  if (driver.websocket && driver.websocket.isConnected) {
-    io.to(driver.websocket.id).emit('routeStatusChanged', status)
-  }
+  //websocket event
+  emitWsEvent({ name: 'routeStatusChanged', payload: status }, [client, driver])
 
   res.json({ route })
 }

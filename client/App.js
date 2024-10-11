@@ -26,20 +26,31 @@ import io from './src/socket'
 const Stack = createNativeStackNavigator()
 
 const App = () => {
-  const { user, updateRouteStatus } = useContext(AuthContext)
+  const { user, updateRouteStatus, updateActiveRoute } = useContext(AuthContext)
 
-  const onRouteStatusChanged = newStatus => {
+  const onRouteStatusChanged = (newStatus) => {
+    if (newStatus._id === 5) {
+      //status 5 means that route is finished so we can remvoe it from activeRoute
+      updateActiveRoute(null)
+      return
+    }
     updateRouteStatus(newStatus)
+  }
+
+  const onRouteCreated = (newRoute) => {
+    updateActiveRoute(newRoute)
   }
 
   useEffect(() => {
     if (!user) return
 
     io.on('routeStatusChanged', onRouteStatusChanged)
+    io.on('routeCreated', onRouteCreated)
 
     return () => {
       //remove listeners
       io.off('routeStatusChanged', onRouteStatusChanged)
+      io.off('routeCreated', onRouteCreated)
     }
   }, [user])
 
@@ -47,10 +58,26 @@ const App = () => {
     <>
       <NavigationContainer ref={navigationRef}>
         <Stack.Navigator screenOptions={{ gestureEnabled: false }}>
-          <Stack.Screen options={{ headerShown: false }} name="ResolveAuth" component={ResolveAuthScreen} />
-          <Stack.Screen options={{ headerShown: false }} name="AuthStack" component={AuthStackNavigator} />
-          <Stack.Screen options={{ headerShown: false }} name="MainTab" component={MainTabNavigator} />
-          <Stack.Screen options={{ headerShown: false }} name="Success" component={SuccessScreen} />
+          <Stack.Screen
+            options={{ headerShown: false }}
+            name="ResolveAuth"
+            component={ResolveAuthScreen}
+          />
+          <Stack.Screen
+            options={{ headerShown: false }}
+            name="AuthStack"
+            component={AuthStackNavigator}
+          />
+          <Stack.Screen
+            options={{ headerShown: false }}
+            name="MainTab"
+            component={MainTabNavigator}
+          />
+          <Stack.Screen
+            options={{ headerShown: false }}
+            name="Success"
+            component={SuccessScreen}
+          />
         </Stack.Navigator>
       </NavigationContainer>
       <Toast config={toastConfig} visibilityTime={3000} />

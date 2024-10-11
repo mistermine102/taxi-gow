@@ -7,7 +7,7 @@ import socket from '../socket'
 
 const Context = createContext()
 
-const validateEmail = email => {
+const validateEmail = (email) => {
   return String(email)
     .toLowerCase()
     .match(
@@ -20,7 +20,15 @@ const reducer = (state, { type, payload }) => {
     case 'set_user':
       return { ...state, user: payload }
     case 'update_route_status':
-      return { ...state, user: { ...state.user, activeRoute: { ...state.user.activeRoute, status: payload } } }
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          activeRoute: { ...state.user.activeRoute, status: payload },
+        },
+      }
+    case 'update_active_route':
+      return { ...state, user: { ...state.user, activeRoute: payload } }
     default:
       return state
   }
@@ -61,7 +69,8 @@ export const Provider = ({ children }) => {
       const parsedPhoneNumber = parsePhoneNumberFromString(phoneNumber)
 
       if (!isEmailValid) throw new Error('INVALID_EMAIL')
-      if (!parsedPhoneNumber || !parsedPhoneNumber.isValid()) throw new Error('INVALID_PHONE')
+      if (!parsedPhoneNumber || !parsedPhoneNumber.isValid())
+        throw new Error('INVALID_PHONE')
       if (password.length < 6) throw new Error('INVALID_PASSWORD')
 
       const response = await appApi.post('/signup', {
@@ -117,11 +126,29 @@ export const Provider = ({ children }) => {
     navigate('AuthStack')
   }
 
-  const updateRouteStatus = newStatus => {
+  const updateRouteStatus = (newStatus) => {
     dispatch({ type: 'update_route_status', payload: newStatus })
   }
 
-  return <Context.Provider value={{ signin, signup, signout, tryLocalSignin, user, updateRouteStatus }}>{children}</Context.Provider>
+  const updateActiveRoute = (newRoute) => {
+    dispatch({ type: 'update_active_route', payload: newRoute })
+  }
+
+  return (
+    <Context.Provider
+      value={{
+        signin,
+        signup,
+        signout,
+        tryLocalSignin,
+        user,
+        updateRouteStatus,
+        updateActiveRoute,
+      }}
+    >
+      {children}
+    </Context.Provider>
+  )
 }
 
 export default Context
