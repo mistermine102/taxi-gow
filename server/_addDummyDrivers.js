@@ -62,7 +62,7 @@ const addDummyDrivers = async (req, res) => {
     },
   ]
 
-  await User.deleteMany({ role: 'driver' })
+  await User.deleteMany({ roles: 'driver' })
   console.log('Removed drivers')
 
   for (let i = 0; i < 5; i++) {
@@ -74,7 +74,7 @@ const addDummyDrivers = async (req, res) => {
       email: `driver${i + 1}@gmail.com`,
       phoneNumber: '+48532395944',
       password,
-      role: 'driver',
+      roles: ['driver'],
       isAvailable: true,
       hasActiveRoute: false,
       activeRoute: null,

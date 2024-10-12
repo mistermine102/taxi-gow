@@ -21,7 +21,7 @@ exports.signup = async (req, res) => {
     password: hashedPassword,
     phoneNumber,
     activeRoute: null,
-    role: 'client',
+    roles: ['client'],
   })
   await newUser.save()
 

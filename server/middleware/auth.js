@@ -37,6 +37,6 @@ exports.isAuthenticated = (req, res, next) => {
 }
 
 exports.isDriver = (req, res, next) => {
-  if (req.user.role !== 'driver') throw new AppError('Not a driver', 401)
+  if (!req.user.roles.includes('driver')) throw new AppError('Not a driver', 401)
   next()
 }

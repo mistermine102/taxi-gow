@@ -4,7 +4,7 @@ const Route = mongoose.model('Route')
 const User = mongoose.model('User')
 
 exports.getRoute = async (req, res) => {
-  const route = await Route.findOne({ [req.user.role === 'client' ? 'clientId' : 'driverId']: req.user._id })
+  const route = await Route.findOne({ [req.user.roles.includes('client') ? 'clientId' : 'driverId']: req.user._id })
 
   res.json({ route })
 }

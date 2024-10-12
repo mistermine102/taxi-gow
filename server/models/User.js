@@ -11,10 +11,7 @@ const schema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  role: {
-    type: String,
-    required: true,
-  },
+  roles: [String],
   activeRoute: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Route',
@@ -44,12 +41,12 @@ const schema = new mongoose.Schema({
 })
 
 schema.methods.transform = function () {
-  const { _id, email, phoneNumber, role, activeRoute } = this
+  const { _id, email, phoneNumber, roles, activeRoute } = this
 
   return {
     _id,
     email,
-    role,
+    roles,
     phoneNumber,
     activeRoute,
   }

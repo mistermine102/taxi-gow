@@ -12,7 +12,7 @@ exports.getDrivers = async (req, res) => {
   const { distance: routeDistance, duration: routeDuration } = routeDistanceData.rows[0].elements[0]
 
   //get drivers
-  const drivers = await User.find({ role: 'driver', isAvailable: true })
+  const drivers = await User.find({ roles: 'driver', isAvailable: true })
 
   //calculate distance and travel time for each driver
   const origins = []

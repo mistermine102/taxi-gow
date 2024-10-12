@@ -23,7 +23,7 @@ const AccountScreen = () => {
           <Text>Numer telefonu</Text>
           <Text>{user.phoneNumber}</Text>
         </View>
-        {user.role === 'driver' ? <IsAvailable /> : null}
+        {user.roles.includes('driver') ? <IsAvailable /> : null}
       </BaseTile>
       <View className="mt-4">
         <BaseButton onPress={signout} title="Wyloguj" />
