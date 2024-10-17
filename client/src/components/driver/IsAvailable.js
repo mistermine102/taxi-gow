@@ -4,6 +4,7 @@ import { useIsFocused } from '@react-navigation/native'
 import appApi from '../../api/appApi'
 import { BaseSwitch } from '../base/base'
 import Loader from '../Loader'
+import Toast from 'react-native-toast-message'
 
 const IsAvailable = () => {
   const isFocused = useIsFocused()
@@ -12,6 +13,8 @@ const IsAvailable = () => {
   const [isLoading, setIsLoading] = useState(false)
 
   const toggleSwitch = async () => {
+    if (hasActiveRoute) return Toast.show({ type: 'error', text1: 'Posiadasz aktywną trasę', text2: 'Nie możesz obecnie zmienić dostępności' })
+
     try {
       setIsAvailable(!isAvailable)
       await appApi.patch('/users/availability')
@@ -41,7 +44,7 @@ const IsAvailable = () => {
   return (
     <View className="flex-row justify-between items-center">
       <Text>Dostępny</Text>
-      {isLoading ? <Loader /> : <BaseSwitch value={isAvailable} onPress={toggleSwitch} disabled={hasActiveRoute} />}
+      {isLoading ? <Loader /> : <BaseSwitch value={isAvailable} onPress={toggleSwitch} />}
     </View>
   )
 }

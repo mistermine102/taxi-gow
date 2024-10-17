@@ -4,26 +4,28 @@ const Route = mongoose.model('Route')
 const User = mongoose.model('User')
 
 exports.getRoute = async (req, res) => {
-  const route = await Route.findOne({ [req.user.roles.includes('client') ? 'clientId' : 'driverId']: req.user._id })
+  const route = await Route.findById(req.user.activeRoute)
 
   res.json({ route })
 }
 
 exports.getRouteDriverLocation = async (req, res) => {
-  const route = await Route.findOne({ clientId: req.user._id }).populate('driverId')
+  const route = await Route.findById(req.user.activeRoute)
+  const driver = await User.findById(route.driver._id)
 
-  const { latitude, longitude } = route.driverId.currentLocation.coords
+  const { latitude, longitude } = driver.currentLocation.coords
 
   res.json({ coords: { latitude, longitude } })
 }
 
 exports.getAvailability = async (req, res) => {
-  const { hasActiveRoute, isAvailable } = req.user
-  res.json({ hasActiveRoute, isAvailable })
+  const { activeRoute, isAvailable } = req.user
+
+  res.json({ hasActiveRoute: !!activeRoute, isAvailable })
 }
 
 exports.toggleAvailability = async (req, res) => {
-  if (req.user.hasActiveRoute) throw new AppError("Can't change availability when have an active route", 400)
+  if (req.user.activeRoute) throw new AppError("Can't change availability when have an active route", 400)
 
   await User.findByIdAndUpdate(req.user._id, { isAvailable: !req.user.isAvailable })
 

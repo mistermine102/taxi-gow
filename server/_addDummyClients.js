@@ -12,6 +12,7 @@ mongoose
 
 const addDummyClients = async () => {
   const clientsEmails = ['client1@gmail.com', 'client2@gmail.com', 'client3@gmail.com', 'client4gmail.com', 'client5@gmail.com']
+  const clientsNames = ['Nikodem', 'Józef', 'Szymon', 'Maciej', 'Adam']
 
   await User.deleteMany({ roles: 'client', email: { $in: clientsEmails } })
   console.log('Removed clients')
@@ -21,6 +22,7 @@ const addDummyClients = async () => {
 
     const client = new User({
       email: clientsEmails[i],
+      name: clientsNames[i],
       password,
       phoneNumber: '+48532395944',
       activeRoute: null,

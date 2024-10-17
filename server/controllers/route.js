@@ -16,8 +16,10 @@ exports.createRoute = async (req, res) => {
   //4. when payment with that id get's paid, server creates a route
 
   //check if user which is trying to create a route doesn't have an active route
-  const foundRoute = await Route.findOne({ clientId: req.user._id })
-  if (foundRoute) throw new AppError('This user has an active route', 400)
+  //SKIP THIS STEP IF ROUTE IS CREATED MANUALLY
+  if (!req.createdManually) {
+    if (req.user.activeRoute) throw new AppError('This user has an active route', 400)
+  }
 
   //extract and parse data from request
   const { clientOrigin, destination, driverId } = req.body
@@ -30,15 +32,11 @@ exports.createRoute = async (req, res) => {
   if (!foundDriver) throw new AppError('Cannot find driver with that id', 400)
   if (!foundDriver.isAvailable) throw new AppError('Driver not available', 400)
 
-  const { latitude: driverLatitude, longitude: driverLongitude } =
-    foundDriver.currentLocation.coords
+  const { latitude: driverLatitude, longitude: driverLongitude } = foundDriver.currentLocation.coords
   const driverOrigin = `${driverLatitude}, ${driverLongitude}`
 
   //calculate distances
-  const distancesData = await calculateDistances(
-    [clientOrigin, driverOrigin],
-    [destination, clientOrigin]
-  )
+  const distancesData = await calculateDistances([clientOrigin, driverOrigin], [destination, clientOrigin])
 
   const clientAddress = distancesData.origin_addresses[0]
   const driverAddress = distancesData.origin_addresses[1]
@@ -48,24 +46,35 @@ exports.createRoute = async (req, res) => {
   const driverToClient = distancesData.rows[1].elements[1]
 
   //determine route's total length
-  const totalDistanceMeters =
-    driverToClient.distance.value + clientToDestination.distance.value
+  const totalDistanceMeters = driverToClient.distance.value + clientToDestination.distance.value
   const totalDistanceKm = parseFloat((totalDistanceMeters / 1000).toFixed(1))
 
   //determine route's total price
   const totalCost = calculateTotalCost(foundDriver.pricing, totalDistanceKm)
 
   //determine estimated duration
-  const totalSeconds =
-    driverToClient.duration.value + clientToDestination.duration.value
+  const totalSeconds = driverToClient.duration.value + clientToDestination.duration.value
   const totalMinutes = Math.ceil(totalSeconds / 60)
 
   //find route status
   const status = await Status.findById(1)
 
+  //if a route is created manually by admin there is no actuaal client in a database thus we can only store phoneNumber provided by an admin
+  const routeClient = req.createdManually
+    ? { phoneNumber: req.body.clientPhoneNumber }
+    : {
+        _id: req.user._id,
+        phoneNumber: req.user.phoneNumber,
+      }
+
   const newRoute = new Route({
-    clientId: req.user._id,
-    driverId,
+    client: routeClient,
+    driver: {
+      _id: foundDriver._id,
+      phoneNumber: foundDriver.phoneNumber,
+      name: foundDriver.name,
+      licensePlate: foundDriver.licensePlate,
+    },
     clientOrigin: {
       latitude: clientLatitude,
       longitude: clientLongitude,
@@ -96,27 +105,37 @@ exports.createRoute = async (req, res) => {
       clientDroppedOffAt: null,
       finishedAt: null,
     },
+    creationMethod: req.createdManually ? 'manual' : 'fromApp',
   })
 
   await newRoute.save()
 
   //change driver's isAvailable
   foundDriver.isAvailable = false
-  foundDriver.hasActiveRoute = true
 
   //change client's and driver's active route
   foundDriver.activeRoute = newRoute._id
 
-  const client = await User.findById(newRoute.clientId)
-  client.activeRoute = newRoute._id
+  //WE CAN CHANGE CLIENT'S ACTIVE ROUTE ONLY IF ROUTE ISN'T CREATED MANUALLY
+  //BEACUSE ONLY THEN WE HAVE AN ACTUAL CLIENT IN DATABASE
+  let client
 
-  //emit websocket updates (to client and to driver)
-  emitWsEvent({ name: 'routeCreated', payload: newRoute }, [
-    foundDriver,
-    client,
-  ])
+  if (!req.createdManually) {
+    client = await User.findById(newRoute.client._id)
+    client.activeRoute = newRoute._id
+    await client.save()
+  }
 
-  await client.save()
+  //if route is created manually we have no actual client in database and we can't emit ws event to him
+  const wsUsers = req.createdManually ? [foundDriver] : [foundDriver, client]
+
+  //emit websocket updates
+  emitWsEvent({ name: 'routeCreated', payload: newRoute }, wsUsers)
+
+  //emit websocket events to all connected admins
+  const admins = await User.find({ roles: 'admin', 'websocket.isConnected': true })
+  emitWsEvent({ name: 'adminRouteCreated', payload: newRoute }, admins)
+
   await foundDriver.save()
 
   res.json({ route: newRoute })
@@ -127,12 +146,16 @@ exports.changeRouteStatus = async (req, res) => {
   const { newStatusId } = req.body
 
   const route = await Route.findById(routeId)
-  const client = await User.findById(route.clientId)
-  const driver = await User.findById(route.driverId)
+  let client
+
+  //client will be undefined if route was created manually
+  if (route.creationMethod !== 'manual') {
+    client = await User.findById(route.client._id)
+  }
+  const driver = await User.findById(route.driver._id)
 
   //check if user is the driver of the route
-  if (!route.driverId.equals(req.user._id))
-    throw new AppError("Can't modify this route", 401)
+  if (!route.driver._id.equals(req.user._id)) throw new AppError("Can't modify this route", 401)
 
   //update route status
   const status = await Status.findById(newStatusId)
@@ -160,12 +183,8 @@ exports.changeRouteStatus = async (req, res) => {
 
       //caclulate actual route duration
       //finishedAt - startedAt
-      const actualDurationInMiliseconds = Math.abs(
-        route.meta.finishedAt - route.meta.startedAt
-      )
-      const actualDurationInMinutes = Math.ceil(
-        actualDurationInMiliseconds / 1000 / 60
-      )
+      const actualDurationInMiliseconds = Math.abs(route.meta.finishedAt - route.meta.startedAt)
+      const actualDurationInMinutes = Math.ceil(actualDurationInMiliseconds / 1000 / 60)
       route.duration.actual = parseInt(actualDurationInMinutes)
 
       //push the route to the archives
@@ -177,13 +196,14 @@ exports.changeRouteStatus = async (req, res) => {
 
       //update driver
       driver.isAvailable = true
-      driver.hasActiveRoute = false
       driver.activeRoute = null
       await driver.save()
 
-      //update client
-      client.activeRoute = null
-      await client.save()
+      //update client (only if route was NOT created manually)
+      if (route.creationMethod !== 'manual') {
+        client.activeRoute = null
+        await client.save()
+      }
 
       break
     default:
@@ -194,7 +214,41 @@ exports.changeRouteStatus = async (req, res) => {
   newStatusId === 5 ? await route.deleteOne() : await route.save()
 
   //websocket event
-  emitWsEvent({ name: 'routeStatusChanged', payload: status }, [client, driver])
+  const wsUsers = route.creationMethod === 'manual' ? [driver] : [driver, client]
+  emitWsEvent({ name: 'routeStatusChanged', payload: status }, wsUsers)
+
+  //emit websocket events to all connected admins
+  const admins = await User.find({ roles: 'admin', 'websocket.isConnected': true })
+  emitWsEvent({ name: 'adminRouteChanged', payload: route }, admins)
 
   res.json({ route })
+}
+
+exports.getAllRoutes = async (req, res) => {
+  const routes = await Route.find()
+
+  res.json({ routes })
+}
+
+exports.getRoutePreview = async (req, res) => {
+  const { origin, destination, driverId } = req.query
+
+  //calculate distance and duration
+  const distancesData = await calculateDistances([origin], [destination])
+  const { distance, duration } = distancesData.rows[0].elements[0]
+  const distanceInKm = parseFloat((distance.value / 1000).toFixed(1))
+  const durationInMinutes = Math.round(duration.value / 60)
+
+  //check if driver is available and calculate cost
+  const driver = await User.findById(driverId)
+  if (!driver.isAvailable) throw new AppError('Driver not available', 400)
+  const cost = calculateTotalCost(driver.pricing, distanceInKm)
+
+  res.json({
+    routePreview: {
+      distance: distanceInKm,
+      duration: durationInMinutes,
+      cost,
+    },
+  })
 }

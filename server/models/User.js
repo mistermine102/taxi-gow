@@ -7,6 +7,7 @@ const schema = new mongoose.Schema({
     required: true,
   },
   phoneNumber: String,
+  name: String,
   password: {
     type: String,
     required: true,
@@ -16,13 +17,17 @@ const schema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Route',
   },
-  hasActiveRoute: Boolean,
+  websocket: {
+    id: String,
+    isConnected: Boolean,
+  },
   isAvailable: Boolean,
   pricing: {
     perKm: Number,
     initialCost: Number,
     currency: String,
   },
+  licensePlate: String,
   currentLocation: {
     timestamp: Number,
     coords: {
@@ -34,10 +39,7 @@ const schema = new mongoose.Schema({
       speed: Number,
     },
   },
-  websocket: {
-    id: String,
-    isConnected: Boolean,
-  },
+  createdAt: { type: Date, default: Date.now }, // Track creation time
 })
 
 schema.methods.transform = function () {
@@ -52,4 +54,11 @@ schema.methods.transform = function () {
   }
 }
 
+//unconfirmedUserSchema will be the same as user schema only with TTL index added
+const unconfirmedUserSchema = schema.clone()
+
+// Create TTL index to remove documents after 30 minutes
+unconfirmedUserSchema.index({ createdAt: 1 }, { expireAfterSeconds: 1800 })
+
+mongoose.model('UnconfirmedUser', unconfirmedUserSchema)
 mongoose.model('User', schema)

@@ -4,16 +4,9 @@ import appApi from '../api/appApi'
 import { navigate } from '../RootNavigation'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import socket from '../socket'
+import validateEmail from '../utils/validateEmail'
 
 const Context = createContext()
-
-const validateEmail = (email) => {
-  return String(email)
-    .toLowerCase()
-    .match(
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-    )
-}
 
 const reducer = (state, { type, payload }) => {
   switch (type) {
@@ -29,14 +22,40 @@ const reducer = (state, { type, payload }) => {
       }
     case 'update_active_route':
       return { ...state, user: { ...state.user, activeRoute: payload } }
+    case 'update_all_routes':
+      //only admins can access and modify all routes
+      return { ...state, allRoutes: payload }
+    case 'update_single_route':
+      return {
+        ...state,
+        allRoutes: state.allRoutes.map(route => {
+          if (route._id === payload._id) {
+            return payload
+          } else {
+            return route
+          }
+        }),
+      }
+    case 'delete_single_route':
+      return {
+        ...state,
+        allRoutes: state.allRoutes.filter(route => route._id !== payload),
+      }
+    case 'add_single_route':
+      return {
+        ...state,
+        allRoutes: [...state.allRoutes, payload],
+      }
     default:
       return state
   }
 }
 
 export const Provider = ({ children }) => {
-  const [{ user }, dispatch] = useReducer(reducer, {
+  const [{ user, allRoutes }, dispatch] = useReducer(reducer, {
     user: null,
+    //only admins can access and modify all routes
+    allRoutes: [],
   })
 
   const signin = async ({ email, password }) => {
@@ -69,27 +88,19 @@ export const Provider = ({ children }) => {
       const parsedPhoneNumber = parsePhoneNumberFromString(phoneNumber)
 
       if (!isEmailValid) throw new Error('INVALID_EMAIL')
-      if (!parsedPhoneNumber || !parsedPhoneNumber.isValid())
-        throw new Error('INVALID_PHONE')
+      if (!parsedPhoneNumber || !parsedPhoneNumber.isValid()) throw new Error('INVALID_PHONE')
       if (password.length < 6) throw new Error('INVALID_PASSWORD')
 
-      const response = await appApi.post('/signup', {
+      await appApi.post('/signup', {
         email,
         password,
         phoneNumber,
       })
 
-      //authenticate web socket connection
-      socket.emit('authenticate', response.data.token)
-
-      //store token in async storage
-      await AsyncStorage.setItem('token', response.data.token)
-
-      //store user info in context
-      dispatch({ type: 'set_user', payload: response.data.user })
-
-      //navigate to mainTab
-      navigate('MainTab')
+      //navigate to email verifiation splash screen
+      navigate('VerifyEmail', {
+        email,
+      })
     } catch (err) {
       throw err
     }
@@ -126,12 +137,29 @@ export const Provider = ({ children }) => {
     navigate('AuthStack')
   }
 
-  const updateRouteStatus = (newStatus) => {
+  const updateRouteStatus = newStatus => {
     dispatch({ type: 'update_route_status', payload: newStatus })
   }
 
-  const updateActiveRoute = (newRoute) => {
+  const updateActiveRoute = newRoute => {
     dispatch({ type: 'update_active_route', payload: newRoute })
+  }
+
+  //only admins can access and modify all routes
+  const updateAllRoutes = routes => {
+    dispatch({ type: 'update_all_routes', payload: routes })
+  }
+
+  const updateSingleRoute = route => {
+    dispatch({ type: 'update_single_route', payload: route })
+  }
+
+  const deleteSingleRoute = routeId => {
+    dispatch({ type: 'delete_single_route', payload: routeId })
+  }
+
+  const addSingleRoute = route => {
+    dispatch({ type: 'add_single_route', payload: route })
   }
 
   return (
@@ -144,6 +172,11 @@ export const Provider = ({ children }) => {
         user,
         updateRouteStatus,
         updateActiveRoute,
+        allRoutes,
+        updateAllRoutes,
+        updateSingleRoute,
+        deleteSingleRoute,
+        addSingleRoute,
       }}
     >
       {children}

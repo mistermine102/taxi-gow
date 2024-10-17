@@ -8,7 +8,7 @@ module.exports = value => {
   const longitude = parseFloat(longitudeStr)
   if (typeof latitude !== 'number' || typeof longitude !== 'number') throw new Error('Invalid coordinates value')
   if (latitude < -90 || latitude > 90) throw new Error('Invalid latitude value')
-  if (longitude < -180 || longitude > 180) throw new Error('Invalid latitude value')
+  if (longitude < -180 || longitude > 180) throw new Error('Invalid longitude value')
 
   return true
 }

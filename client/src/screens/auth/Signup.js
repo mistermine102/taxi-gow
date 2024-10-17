@@ -38,13 +38,13 @@ const SignupScreen = ({ navigation }) => {
       <View className="mt-8">
         <BaseTitle>Utwórz konto!</BaseTitle>
       </View>
-      <View className="mt-4">
+      <View className="mt-4 mb-2" style={{ gap: 16 }}>
         <BaseInput value={email} onChangeText={setEmail} placeholder="Email" />
         <PhoneInput value={phoneNumber} onChangeText={setPhoneNumber} onChangeFormattedText={setFormattedPhoneNumber} />
         <BaseInput value={password} onChangeText={setPassword} secureTextEntry placeholder="Hasło" />
         <BaseButton onPress={onSubmit} title="Zarejestruj się" isLoading={isLoading} />
-        <BaseLink title="Masz już konto? Zaloguj się" onPress={() => navigation.navigate('Signin')} />
       </View>
+      <BaseLink title="Masz już konto? Zaloguj się" onPress={() => navigation.navigate('Signin')} />
     </ScreenWrapper>
   )
 }

@@ -16,7 +16,12 @@ const SigninScreen = ({ navigation }) => {
       async () => {
         await signin({ email, password })
       },
-      () => Toast.show({ type: 'error', text1: 'Błąd logowania', text2: 'Nieprawidłowy email lub hasło' })
+      err => {
+        if (err.response && err.response.data.message === 'USER_NOT_VERIFIED') {
+          return Toast.show({ type: 'error', text1: 'Błąd logowania', text2: 'Konto nie zostało zweryfikowane' })
+        }
+        Toast.show({ type: 'error', text1: 'Błąd logowania', text2: 'Nieprawidłowy email lub hasło' })
+      }
     )
   }
 
@@ -25,12 +30,12 @@ const SigninScreen = ({ navigation }) => {
       <View className="mt-8">
         <BaseTitle>Witaj ponownie!</BaseTitle>
       </View>
-      <View className="mt-4">
+      <View className="mt-4 mb-2" style={{ gap: 16 }}>
         <BaseInput value={email} onChangeText={setEmail} placeholder="Email" />
         <BaseInput value={password} onChangeText={setPassword} secureTextEntry placeholder="Hasło" />
         <BaseButton onPress={onSubmit} title="Zaloguj się" isLoading={isLoading} />
-        <BaseLink title="Nie masz konta? Zarejestruj się" onPress={() => navigation.navigate('Signup')} />
       </View>
+      <BaseLink title="Nie masz konta? Zarejestruj się" onPress={() => navigation.navigate('Signup')} />
     </ScreenWrapper>
   )
 }

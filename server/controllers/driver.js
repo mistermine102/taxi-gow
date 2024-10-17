@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const User = mongoose.model('User')
 const calculateDistances = require('../utils/calculateDistances')
 const calculateTotalCost = require('../utils/calculateTotalCost')
+const AppError = require('../classes/AppError')
 
 exports.getDrivers = async (req, res) => {
   //receive information about client's origin
@@ -58,6 +59,41 @@ exports.getDrivers = async (req, res) => {
     route: {
       distance: routeDistance,
       duration: routeDuration,
+    },
+  })
+}
+
+exports.getAllDrivers = async (req, res) => {
+  const drivers = await User.find({ roles: 'driver' })
+
+
+  //remove passwords before being sent
+  const transformedDrivers = []
+
+  for(const driver of drivers) {
+    const driverDoc = driver._doc
+    delete driverDoc.password
+
+    transformedDrivers.push({
+      ...driverDoc
+    })
+
+  }
+
+  res.json({ drivers: transformedDrivers })
+}
+
+exports.getDriverLocation = async (req, res) => {
+  const { driverId } = req.query
+  const driver = await User.findById(driverId)
+  if (!driver) throw new AppError('No driver found', 400)
+
+  const { latitude, longitude } = driver.currentLocation.coords
+
+  res.json({
+    location: {
+      latitude,
+      longitude,
     },
   })
 }

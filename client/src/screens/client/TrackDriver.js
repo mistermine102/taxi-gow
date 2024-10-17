@@ -1,9 +1,5 @@
 import { useState, useContext } from 'react'
-import {
-  ScreenWrapper,
-  BaseTitle,
-  BaseButton,
-} from '../../components/base/base'
+import { ScreenWrapper, BaseTitle, BaseButton } from '../../components/base/base'
 import { View, Image, TouchableOpacity } from 'react-native'
 import appApi from '../../api/appApi'
 import RouteItem from '../../components/RouteItem'
@@ -36,7 +32,7 @@ const DriverTrackScreen = ({ navigation }) => {
     }
   }
 
-  const handleRefreshPress = async () => {
+  const handleRefreshPress = () => {
     refreshRoutes.send(async () => {
       const response = await appApi.get('/users/route')
       updateActiveRoute(response.data.route)
@@ -50,10 +46,7 @@ const DriverTrackScreen = ({ navigation }) => {
           <BaseTitle>Wygląda na to że nie zamówiłeś żadnego kierowcy</BaseTitle>
           <Image source={noRoute} className="w-[400px] h-[200px]" />
           <View className="w-full">
-            <BaseButton
-              title="Zamów kierowcę"
-              onPress={navigateToRouteCreate}
-            />
+            <BaseButton title="Zamów kierowcę" onPress={navigateToRouteCreate} />
           </View>
         </View>
       </ScreenWrapper>
@@ -68,11 +61,7 @@ const DriverTrackScreen = ({ navigation }) => {
         markers={
           driverLocation
             ? [
-                <Marker
-                  key="driverLocation"
-                  identifier="driverLocation"
-                  coordinate={driverLocation}
-                >
+                <Marker key="driverLocation" identifier="driverLocation" coordinate={driverLocation}>
                   <BaseIcon name="taxi" size={48} />
                 </Marker>,
               ]
@@ -98,20 +87,17 @@ const DriverTrackScreen = ({ navigation }) => {
         </TouchableOpacity>
       </View>
       {refreshRoutes.isLoading ? (
-        <Loader size='large' />
+        <Loader size="large" />
       ) : (
         <RouteItem
           userType="client"
-          name={route.driverId}
+          name={route.driver.name}
+          licensePlate={route.driver.licensePlate}
           status={route.status}
           origin={route.clientOrigin.address}
           destination={route.destination.address}
         >
-          <BaseButton
-            shadow={false}
-            title="Śledź kierowcę"
-            onPress={openModal}
-          />
+          <BaseButton shadow={false} title="Śledź kierowcę" onPress={openModal} />
         </RouteItem>
       )}
     </ScreenWrapper>

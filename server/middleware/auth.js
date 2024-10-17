@@ -36,7 +36,9 @@ exports.isAuthenticated = (req, res, next) => {
   next()
 }
 
-exports.isDriver = (req, res, next) => {
-  if (!req.user.roles.includes('driver')) throw new AppError('Not a driver', 401)
+exports.hasRole = role => (req, res, next) => {
+  if (!req.user.roles.includes(role)) throw new AppError(`Missing role: ${role}`, 401)
   next()
 }
+
+

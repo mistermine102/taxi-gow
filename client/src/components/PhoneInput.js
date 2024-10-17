@@ -1,14 +1,13 @@
 import RNPhoneInput from 'react-native-phone-number-input'
 import colors from '../../colors'
 
-const PhoneInput = ({ value = '', onChangeFormattedText = () => {}, onChangeText = () => {} }) => {
+const PhoneInput = ({ placeholder = 'Numer telefonu', value = '', onChangeFormattedText = () => {}, onChangeText = () => {} }) => {
   return (
     <RNPhoneInput
       containerStyle={{
         backgroundColor: colors.lightGray,
         borderRadius: 6,
         width: '100%',
-        marginBottom: 16,
       }}
       textContainerStyle={{
         backgroundColor: colors.lightGray,
@@ -22,7 +21,7 @@ const PhoneInput = ({ value = '', onChangeFormattedText = () => {}, onChangeText
       onChangeFormattedText={onChangeFormattedText}
       onChangeText={onChangeText}
       defaultCode="PL"
-      placeholder="Numer telefonu"
+      placeholder={placeholder}
       layout="first"
     />
   )

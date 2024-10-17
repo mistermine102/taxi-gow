@@ -9,14 +9,21 @@ const locationSchema = new mongoose.Schema({
 const statusSchema = require('./Status')
 
 const schema = new mongoose.Schema({
-  clientId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
+  client: {
+    _id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
+    phoneNumber: String,
   },
-  driverId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+  driver: {
+    _id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
+    licensePlate: String,
+    phoneNumber: String,
+    name: String,
   },
   clientOrigin: locationSchema,
   driverOrigin: locationSchema,
@@ -43,6 +50,7 @@ const schema = new mongoose.Schema({
     clientDroppedOffAt: Date,
     finishedAt: Date,
   },
+  creationMethod: String,
 })
 
 mongoose.model('Route', schema)

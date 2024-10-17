@@ -11,8 +11,8 @@ export const BaseButton = ({ shadow = true, alt = false, title = 'Przycisk', onP
     <TouchableOpacity
       className={
         alt
-          ? 'bg-transparent border border-darkGray items-center justify-center rounded-md mb-2 h-10'
-          : 'bg-primary border border-primary items-center justify-center rounded-md mb-2 h-10'
+          ? 'bg-transparent border border-darkGray items-center justify-center rounded-md h-10'
+          : 'bg-primary border border-primary items-center justify-center rounded-md h-10'
       }
       onPress={onPress}
     >
@@ -37,7 +37,7 @@ export const BaseInput = ({
       autoCapitalize={autoCapitalize}
       onChangeText={onChangeText}
       placeholder={placeholder}
-      className="rounded-md mb-4 bg-lightGray px-4 py-3 text-[16px]"
+      className="rounded-md bg-lightGray px-4 py-3 text-[16px]"
     />
   )
 }

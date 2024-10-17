@@ -6,16 +6,13 @@ import RouteContext from '../../../context/Route'
 import AuthContext from '../../../context/Auth'
 import appApi from '../../../api/appApi'
 import { useIsFocused } from '@react-navigation/native'
-import {
-  ScreenWrapper,
-  BaseButton,
-  BaseTitle,
-} from '../../../components/base/base'
+import { ScreenWrapper, BaseButton, BaseTitle } from '../../../components/base/base'
 import { familyTaxi } from '../../../images/index'
 import MapModal from '../../../components/modals/MapModal'
 import CheckServicedArea from '../../../components/client/CheckServicedArea'
 import useAsyncRequest from '../../../hooks/useAsyncRequest'
 import Loader from '../../../components/Loader'
+import { SERVICED_AREA_CENTER } from '../../../../servicedArea'
 
 const SelectOrigin = ({ navigation }) => {
   const isFocused = useIsFocused()
@@ -52,7 +49,9 @@ const SelectOrigin = ({ navigation }) => {
   return (
     <ScreenWrapper>
       {getRoute.isLoading ? (
-        <Loader />
+        <View className="h-[300px] items-center justify-center">
+          <Loader size="large" />
+        </View>
       ) : (
         <>
           <MapModal />
@@ -60,37 +59,31 @@ const SelectOrigin = ({ navigation }) => {
             <BaseTitle>Skąd mamy cię odebrać?</BaseTitle>
           </View>
           <View className="mt-4">
-            <PlacesInput
-              placeholder="Wpisz nazwę ulicy"
-              onPlaceSelect={onPlaceSelect}
-            />
+            <PlacesInput placeholder="Wpisz nazwę ulicy" onPlaceSelect={onPlaceSelect} />
           </View>
           <CheckServicedArea />
-          {origin ? (
-            <View className="mt-8">
-              <Map
-                rounded
-                region={{
-                  latitude: 17,
-                  longitude: 52,
-                  latitudeDelta: 0.5,
-                  longitudeDelta: 0.5,
-                }}
-                directions={{ origin: origin.coords }}
-              />
-              <View className="mt-4">
-                <BaseButton
-                  title="Kontynuuj"
-                  onPress={() => navigation.navigate('SelectDestination')}
-                />
-              </View>
-            </View>
-          ) : (
-            <View className="items-center mt-8 p-4">
-              <Image source={familyTaxi} className="w-[400px] h-[200px]" />
-            </View>
-          )}
         </>
+      )}
+      {origin ? (
+        <View>
+          <Map
+            rounded
+            region={{
+              latitude: SERVICED_AREA_CENTER.latitude,
+              longitude: SERVICED_AREA_CENTER.longitude,
+              latitudeDelta: 0.5,
+              longitudeDelta: 0.5,
+            }}
+            directions={{ origin: origin.coords }}
+          />
+          <View className="mt-4">
+            <BaseButton title="Kontynuuj" onPress={() => navigation.navigate('SelectDestination')} />
+          </View>
+        </View>
+      ) : (
+        <View className="items-center mt-8 p-4" style={getRoute.isLoading ? { display: 'none' } : null}>
+          <Image source={familyTaxi} className="w-[400px] h-[200px]" />
+        </View>
       )}
     </ScreenWrapper>
   )

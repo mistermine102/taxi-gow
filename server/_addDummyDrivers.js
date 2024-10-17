@@ -62,6 +62,9 @@ const addDummyDrivers = async (req, res) => {
     },
   ]
 
+  const dummyNames = ['Jan', 'Wiktor', 'Marek', 'Kamil', 'Sebastian']
+  const dummyPlates = ['POT HUF2', 'POS 34789', 'PKE DH67', 'POT 9C7A', 'PKE NZA9']
+
   await User.deleteMany({ roles: 'driver' })
   console.log('Removed drivers')
 
@@ -73,12 +76,13 @@ const addDummyDrivers = async (req, res) => {
     const driver = new User({
       email: `driver${i + 1}@gmail.com`,
       phoneNumber: '+48532395944',
+      name: dummyNames[i],
       password,
       roles: ['driver'],
       isAvailable: true,
-      hasActiveRoute: false,
       activeRoute: null,
       pricing: dummyPrices[i],
+      licensePlate: dummyPlates[i],
       currentLocation: {
         timestamp: 10000,
         coords: {
