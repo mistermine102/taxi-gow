@@ -1,5 +1,5 @@
 import EmptyModal from './EmptyModal'
-import { BaseButton, BaseTile, BaseTitle } from '../base/base'
+import { BaseButton, BaseTile, BaseTitle, BaseLabel } from '../base/base'
 import { View, Text } from 'react-native'
 import Loader from '../Loader'
 import Map from '../Map'
@@ -28,28 +28,11 @@ const AdminRoutePreview = ({ isVisible, onClose, onBtnPress, route, isLoading })
                 ></Map>
                 <BaseTile>
                   <View style={{ gap: 4 }}>
-                    <View className="flex-row justify-between">
-                      <Text className="text-lg font-semibold text-darkGray">Dystans</Text>
-                      <Text className="text-lg font-bold text-darkGray">{route.distance} km</Text>
-                    </View>
-                    <View className="flex-row justify-between">
-                      <Text className="text-lg font-semibold text-darkGray">Przewidywany czas trwania</Text>
-                      <Text className="text-lg font-bold text-darkGray">{route.duration} min</Text>
-                    </View>
-                    <View className="flex-row justify-between">
-                      <Text className="text-lg font-semibold text-darkGray">Koszt</Text>
-                      <Text className="text-lg font-bold text-darkGray">{route.cost} zł</Text>
-                    </View>
-                    <View className="flex-row justify-between">
-                      <Text className="text-lg font-semibold text-darkGray">Kierowca</Text>
-                      <Text className="text-lg font-bold text-darkGray">
-                        {route.driver.name} ({route.driver.licensePlate})
-                      </Text>
-                    </View>
-                    <View className="flex-row justify-between">
-                      <Text className="text-lg font-semibold text-darkGray">Nr tel klienta</Text>
-                      <Text className="text-lg font-bold text-darkGray">{route.clientPhoneNumber}</Text>
-                    </View>
+                    <BaseLabel label="Dystans" value={`${route.distance} km`} />
+                    <BaseLabel label="Przewidywany czas" value={`${route.duration} min`} />
+                    <BaseLabel label="Koszt" value={`${route.cost} zł`} />
+                    <BaseLabel label="Kierowca" value={`${route.driver.name} (${route.driver.licensePlate})`} />
+                    <BaseLabel label="Nr tel klienta" value={route.clientPhoneNumber} />
                   </View>
                 </BaseTile>
               </View>

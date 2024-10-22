@@ -1,10 +1,10 @@
 import RouteCreateNavigator from './RouteCreate'
+import AccountStack from './AccountStack'
 import AdminNavigator from './Admin'
 import AuthContext from '../context/Auth'
 import { useContext } from 'react'
 import TrackDriverScreen from '../screens/client/TrackDriver'
 import DriverRoutesScreen from '../screens/driver/DriverRoutes'
-import AccountScreen from '../screens/Account'
 import { BaseIcon } from '../components/base/base'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import colors from '../../colors'
@@ -106,6 +106,7 @@ const MainTabNavigator = () => {
         options={{
           tabBarLabel: 'Konto',
           title: 'Konto',
+          headerShown: false,
           tabBarActiveTintColor: ACTIVE_TAB_COLOR,
           tabBarInactiveTintColor: INACTIVE_TAB_COLOR,
           tabBarLabelStyle: { fontWeight: 'bold' },
@@ -113,8 +114,8 @@ const MainTabNavigator = () => {
             <BaseIcon name={user.roles.includes('admin') ? 'account-tie' : 'account'} color={focused ? ACTIVE_TAB_COLOR : INACTIVE_TAB_COLOR} />
           ),
         }}
-        name="Account"
-        component={AccountScreen}
+        name="AccountStack"
+        component={AccountStack}
       />
     </Tab.Navigator>
   )

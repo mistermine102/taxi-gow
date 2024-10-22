@@ -43,7 +43,7 @@ const IsAvailable = () => {
 
   return (
     <View className="flex-row justify-between items-center">
-      <Text>Dostępny</Text>
+      <Text className="font-bold text-darkGray">Dostępny</Text>
       {isLoading ? <Loader /> : <BaseSwitch value={isAvailable} onPress={toggleSwitch} />}
     </View>
   )

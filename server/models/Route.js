@@ -29,7 +29,11 @@ const schema = new mongoose.Schema({
   driverOrigin: locationSchema,
   destination: locationSchema,
   waypoints: [locationSchema],
-  totalDistance: Number,
+  distance: {
+    driverToClient: Number,
+    clientToDestination: Number,
+    total: Number,
+  },
   totalCost: Number,
   status: statusSchema,
   history: [

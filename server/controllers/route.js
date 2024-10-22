@@ -45,12 +45,12 @@ exports.createRoute = async (req, res) => {
   const clientToDestination = distancesData.rows[0].elements[0]
   const driverToClient = distancesData.rows[1].elements[1]
 
-  //determine route's total length
-  const totalDistanceMeters = driverToClient.distance.value + clientToDestination.distance.value
-  const totalDistanceKm = parseFloat((totalDistanceMeters / 1000).toFixed(1))
+  const driverToClientKm = parseFloat((driverToClient.distance.value / 1000).toFixed(1))
+  const clientToDestinationKm = parseFloat((clientToDestination.distance.value / 1000).toFixed(1))
+  const totalDistanceKm = parseFloat(driverToClientKm + clientToDestinationKm).toFixed(1)
 
   //determine route's total price
-  const totalCost = calculateTotalCost(foundDriver.pricing, totalDistanceKm)
+  const totalCost = calculateTotalCost(foundDriver.pricing, clientToDestinationKm)
 
   //determine estimated duration
   const totalSeconds = driverToClient.duration.value + clientToDestination.duration.value
@@ -90,7 +90,11 @@ exports.createRoute = async (req, res) => {
       longitude: destinationLongitude,
       address: destinationAddress,
     },
-    totalDistance: totalDistanceKm,
+    distance: {
+      driverToClient: driverToClientKm,
+      clientToDestination: clientToDestinationKm,
+      total: totalDistanceKm,
+    },
     totalCost,
     status,
     history: [],
@@ -105,7 +109,7 @@ exports.createRoute = async (req, res) => {
       clientDroppedOffAt: null,
       finishedAt: null,
     },
-    creationMethod: req.createdManually ? 'manual' : 'fromApp',
+    creationMethod: req.createdManually ? 'manual' : 'app',
   })
 
   await newRoute.save()

@@ -5,7 +5,7 @@ dotenv.config()
 
 export default ({ config }) => ({
   ...config,
-  icon: process.env.APP_ICON || './assets/icon.png',
+  icon: process.env.APP_ICON || './icon.png',
   name: process.env.APP_NAME || 'My App',
   android: {
     config: {
@@ -24,7 +24,7 @@ export default ({ config }) => ({
       foregroundImage: './assets/adaptive-icon.png',
       backgroundColor: '#ffffff',
     },
-    package: 'com.anonymous.client',
+    package: 'com.myApp',
     runtimeVersion: '1.0.0',
   },
 })

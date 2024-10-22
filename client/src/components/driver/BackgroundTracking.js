@@ -1,12 +1,11 @@
-import { Text, View, Alert, Button } from 'react-native'
+import { Text, View } from 'react-native'
 import { BaseButton } from '../base/base'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import * as TaskManager from 'expo-task-manager'
 import * as Location from 'expo-location'
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import appApi from '../../api/appApi'
-
-const LOCATION_TASK_NAME = 'background-location-task'
+import AuthContext from '../../context/Auth'
+import { LOCATION_TASK_NAME } from '../../constants'
 
 const BackgroundTracking = () => {
   const [isEnabled, setIsEnabled] = useState(false)
@@ -15,6 +14,7 @@ const BackgroundTracking = () => {
     const checkForBgLocation = async () => {
       try {
         const hasStarted = await Location.hasStartedLocationUpdatesAsync(LOCATION_TASK_NAME)
+
         if (hasStarted) {
           setIsEnabled(true)
         } else {
@@ -112,6 +112,7 @@ TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
   console.log('Task running', new Date())
   if (error) {
     // Error occurred - check `error.message` for more details.
+    console.log(error)
     return
   }
   if (data) {

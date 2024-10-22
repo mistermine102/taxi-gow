@@ -69,8 +69,8 @@ const SelectOrigin = ({ navigation }) => {
           <Map
             rounded
             region={{
-              latitude: SERVICED_AREA_CENTER.latitude,
-              longitude: SERVICED_AREA_CENTER.longitude,
+              latitude: origin.coords.latitude,
+              longitude: origin.coords.longitude,
               latitudeDelta: 0.5,
               longitudeDelta: 0.5,
             }}

@@ -5,6 +5,8 @@ import { navigate } from '../RootNavigation'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import socket from '../socket'
 import validateEmail from '../utils/validateEmail'
+import { LOCATION_TASK_NAME } from '../constants'
+import * as Location from 'expo-location'
 
 const Context = createContext()
 
@@ -132,9 +134,20 @@ export const Provider = ({ children }) => {
   }
 
   const signout = async () => {
-    await AsyncStorage.removeItem('token')
-    dispatch({ type: 'set_user', payload: null })
-    navigate('AuthStack')
+    try {
+      await AsyncStorage.removeItem('token')
+
+      //check if background tracking is enabled and disable it
+      const hasStarted = await Location.hasStartedLocationUpdatesAsync(LOCATION_TASK_NAME)
+      if (hasStarted) {
+        await Location.stopLocationUpdatesAsync(LOCATION_TASK_NAME)
+      }
+
+      dispatch({ type: 'set_user', payload: null })
+      navigate('AuthStack')
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   const updateRouteStatus = newStatus => {

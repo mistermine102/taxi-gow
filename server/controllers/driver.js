@@ -26,6 +26,7 @@ exports.getDrivers = async (req, res) => {
   const distancesData = await calculateDistances(origins, [clientOrigin])
 
   //sort driver's by their travel time to client's origin
+  //transformed drivers are driver's that will be sent to the client (stripped from info like password etc)
   const tranformedDrivers = []
 
   for (let i = 0; i < drivers.length; i++) {
@@ -34,8 +35,9 @@ exports.getDrivers = async (req, res) => {
 
     //calculate drivers cost
     //(total distance is in meters, we convert it to km)
-    const totalDistance = parseFloat(((row.distance.value + routeDistance.value) / 1000).toFixed(1))
-    const totalCost = calculateTotalCost(driver.pricing, totalDistance)
+    //distance is driverToClient + clientToDestination
+    const distance = parseFloat(((routeDistance.value) / 1000).toFixed(1))
+    const totalCost = calculateTotalCost(driver.pricing, distance)
 
     tranformedDrivers.push({
       _id: driver._id,
@@ -45,7 +47,7 @@ exports.getDrivers = async (req, res) => {
         total: totalCost,
         initialCost: driver.pricing.initialCost,
         perKm: driver.pricing.perKm,
-        totalKm: totalDistance,
+        totalKm: distance,
         currency: driver.pricing.currency,
       },
     })
@@ -66,18 +68,16 @@ exports.getDrivers = async (req, res) => {
 exports.getAllDrivers = async (req, res) => {
   const drivers = await User.find({ roles: 'driver' })
 
-
   //remove passwords before being sent
   const transformedDrivers = []
 
-  for(const driver of drivers) {
+  for (const driver of drivers) {
     const driverDoc = driver._doc
     delete driverDoc.password
 
     transformedDrivers.push({
-      ...driverDoc
+      ...driverDoc,
     })
-
   }
 
   res.json({ drivers: transformedDrivers })

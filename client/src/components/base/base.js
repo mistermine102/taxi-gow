@@ -119,3 +119,22 @@ export const BaseTile = ({ children }) => {
 export const ScreenWrapper = ({ children }) => {
   return <View className="flex-1 bg-white px-base">{children}</View>
 }
+
+export const BaseLabel = ({ label, value, alignment = 'horizontal' }) => {
+  if (alignment === 'horizontal') {
+    return (
+      <View className="flex-row justify-between">
+        <Text className="text-lg text-darkGray">{label}</Text>
+        <Text className="text-lg font-bold text-darkGray">{value}</Text>
+      </View>
+    )
+  }
+  if (alignment === 'vertical') {
+    return (
+      <View>
+        <Text className=" text-darkGray">{label}</Text>
+        <Text className="text-lg font-semibold text-darkGray">{value}</Text>
+      </View>
+    )
+  }
+}

@@ -10,7 +10,7 @@ const VerifyEmail = ({ navigation, route }) => {
         <BaseTitle>Potwierdź adres email</BaseTitle>
         <View className="mt-2">
           <Text>
-            Na adres <Text className="font-bold">{route.params.email}</Text> został wysłany link. Kliknij w niego aby aktywować konto.
+            Na adres <Text className="font-bold text-darkGray">{route.params.email}</Text> został wysłany link. Kliknij w niego aby aktywować konto.
           </Text>
         </View>
 

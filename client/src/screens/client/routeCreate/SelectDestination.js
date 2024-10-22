@@ -26,9 +26,27 @@ const SelectDestination = ({ navigation }) => {
       {origin ? (
         <View className="mt-8">
           {destination ? (
-            <Map rounded directions={{ origin: origin.coords, destination: destination.coords }} />
+            <Map
+              rounded
+              region={{
+                latitude: origin.coords.latitude,
+                longitude: origin.coords.longitude,
+                latitudeDelta: 0.5,
+                longitudeDelta: 0.5,
+              }}
+              directions={{ origin: origin.coords, destination: destination.coords }}
+            />
           ) : (
-            <Map rounded directions={{ origin: origin.coords }} />
+            <Map
+              rounded
+              region={{
+                latitude: origin.coords.latitude,
+                longitude: origin.coords.longitude,
+                latitudeDelta: 0.5,
+                longitudeDelta: 0.5,
+              }}
+              directions={{ origin: origin.coords }}
+            />
           )}
 
           {destination ? (

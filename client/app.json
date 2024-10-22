@@ -19,7 +19,7 @@
       "runtimeVersion": {
         "policy": "appVersion"
       },
-      "bundleIdentifier": "com.anonymous.client"
+      "bundleIdentifier": "HRKN6CVHM3.com.myapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
