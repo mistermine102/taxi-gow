@@ -3,7 +3,16 @@ import MapViewDirections from 'react-native-maps-directions'
 import { useEffect, useRef } from 'react'
 import colors from '../../colors'
 
-const Map = ({ children, directions = {}, markers = [], height = 300, rounded = false, region = {} }) => {
+const Map = ({
+  children,
+  directions = {},
+  markers = [],
+  height = 300,
+  rounded = false,
+  region = {},
+  onRegionChange = () => {},
+  animateToRegion = null,
+}) => {
   const { origin, destination } = directions
   const mapRef = useRef()
 
@@ -11,8 +20,23 @@ const Map = ({ children, directions = {}, markers = [], height = 300, rounded = 
     mapRef.current.fitToSuppliedMarkers(['origin', 'destination'])
   }, [origin, destination])
 
+  useEffect(() => {
+    if (!animateToRegion) return
+
+    const { latitude, longitude } = animateToRegion
+
+    mapRef.current.animateToRegion(
+      {
+        latitude,
+        longitude,
+      },
+      1000
+    )
+  }, [animateToRegion?.latitude, animateToRegion?.longitude])
+
   return (
     <MapView
+      onRegionChange={onRegionChange}
       customMapStyle={[
         {
           elementType: 'geometry',

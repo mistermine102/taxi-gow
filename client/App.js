@@ -1,4 +1,7 @@
 import 'react-native-gesture-handler'
+import './src/sheets'
+import { SheetProvider } from 'react-native-actions-sheet'
+
 import Toast from 'react-native-toast-message'
 import toastConfig from './src/toastConfig'
 
@@ -31,6 +34,13 @@ const App = () => {
   const onRouteStatusChanged = newStatus => {
     if (newStatus._id === 5) {
       //status 5 means that route is finished so we can remvoe it from activeRoute
+      Toast.show({ type: 'success', text1: 'Przejazd zakończony', text2: 'Twój przejazd został zakończony' })
+      updateActiveRoute(null)
+      return
+    }
+    if (newStatus._id === 100) {
+      //status 100 means that route is canceled so we can remvoe it from activeRoute
+      Toast.show({ type: 'info', text1: 'Przejazd anulowany', text2: 'Twój przejazd został anulowany' })
       updateActiveRoute(null)
       return
     }
@@ -100,11 +110,13 @@ const App = () => {
 export default () => {
   return (
     <SafeAreaProvider>
-      <AuthProvider>
-        <RouteProvider>
-          <App />
-        </RouteProvider>
-      </AuthProvider>
+      <SheetProvider>
+        <AuthProvider>
+          <RouteProvider>
+            <App />
+          </RouteProvider>
+        </AuthProvider>
+      </SheetProvider>
     </SafeAreaProvider>
   )
 }

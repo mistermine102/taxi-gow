@@ -12,8 +12,21 @@ exports.getDrivers = async (req, res) => {
   const routeDistanceData = await calculateDistances([clientOrigin], [destination])
   const { distance: routeDistance, duration: routeDuration } = routeDistanceData.rows[0].elements[0]
 
+  const routeDistanceInKm = parseFloat((routeDistance.value / 1000).toFixed(1))
+  const routeDurationInMinutes = Math.ceil(routeDuration.value / 60)
+
   //get drivers
   const drivers = await User.find({ roles: 'driver', isAvailable: true })
+
+  if (!drivers.length) {
+    return res.json({
+      drivers: [],
+      route: {
+        distance: routeDistanceInKm,
+        duration: routeDurationInMinutes,
+      },
+    })
+  }
 
   //calculate distance and travel time for each driver
   const origins = []
@@ -34,33 +47,37 @@ exports.getDrivers = async (req, res) => {
     const row = distancesData.rows[i].elements[0]
 
     //calculate drivers cost
-    //(total distance is in meters, we convert it to km)
     //distance is driverToClient + clientToDestination
-    const distance = parseFloat(((routeDistance.value) / 1000).toFixed(1))
-    const totalCost = calculateTotalCost(driver.pricing, distance)
+    const totalCost = calculateTotalCost(driver.pricing, routeDistanceInKm)
+    const waitTimeInMinutes = Math.ceil(row.duration.value / 60)
+    const distanceFromClientInKm = parseFloat((row.distance.value / 1000).toFixed(1))
 
     tranformedDrivers.push({
+      name: driver.name,
       _id: driver._id,
-      distance: row.distance,
-      duration: row.duration,
+      vehicle: driver.vehicle,
+      waitTime: waitTimeInMinutes,
+      distanceFromClient: distanceFromClientInKm,
       cost: {
         total: totalCost,
         initialCost: driver.pricing.initialCost,
         perKm: driver.pricing.perKm,
-        totalKm: distance,
+        totalKm: routeDistanceInKm,
         currency: driver.pricing.currency,
       },
     })
   }
 
-  tranformedDrivers.sort((a, b) => a.duration.value - b.duration.value)
+  tranformedDrivers.sort((a, b) => a.waitTime - b.waitTime)
 
   ///send response
   res.json({
     drivers: tranformedDrivers,
     route: {
-      distance: routeDistance,
-      duration: routeDuration,
+      distance: routeDistanceInKm,
+      duration: routeDurationInMinutes,
+      clientOriginAddress: routeDistanceData.origin_addresses[0],
+      destinationAddress: routeDistanceData.destination_addresses[0],
     },
   })
 }

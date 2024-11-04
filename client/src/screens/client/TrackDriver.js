@@ -10,11 +10,20 @@ import { noRoute } from '../../images/index'
 import AuthContext from '../../context/Auth'
 import useAsyncRequest from '../../hooks/useAsyncRequest'
 import Loader from '../../components/Loader'
+import useLocation from '../../hooks/useLocation'
+import colors from '../../../colors'
+import { SheetManager } from 'react-native-actions-sheet'
+
+let intervalId = null
 
 const DriverTrackScreen = ({ navigation }) => {
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [driverLocation, setDriverLocation] = useState()
   const refreshRoutes = useAsyncRequest()
+  const getDriver = useAsyncRequest()
+  const { currentLocation, locationPermissionError, getCurrentLocation } = useLocation()
+  const [mapModalMarkers, setMapModalMarkers] = useState([])
+
   const { user, updateActiveRoute } = useContext(AuthContext)
   const { activeRoute: route } = user
 
@@ -22,14 +31,36 @@ const DriverTrackScreen = ({ navigation }) => {
     navigation.navigate('RouteCreateStack')
   }
 
-  const openModal = async () => {
-    try {
-      setIsModalVisible(true)
+  const getDriverLocation = () => {
+    getCurrentLocation()
+
+    getDriver.send(async () => {
+      setDriverLocation(null)
+
       const response = await appApi.get('/users/route/driver/location')
       setDriverLocation(response.data.coords)
-    } catch (err) {
-      console.log(err)
-    }
+
+      //push driver location marker
+      setMapModalMarkers([
+        <Marker key="driverLocation" identifier="driverLocation" coordinate={response.data.coords}>
+          <BaseIcon name="taxi" size={48} color={colors.primary} />
+        </Marker>,
+        <Marker key="currentLocation" identifier="currentLocation" coordinate={currentLocation.coords}>
+          <BaseIcon name="map-marker" size={48} color={colors.currentLocationMarker} />
+        </Marker>,
+      ])
+    })
+  }
+
+  const openModal = async () => {
+    setIsModalVisible(true)
+    getDriverLocation()
+    intervalId = setInterval(getDriverLocation, 30000)
+  }
+
+  const closeModal = () => {
+    clearInterval(intervalId)
+    setIsModalVisible(false)
   }
 
   const handleRefreshPress = () => {
@@ -56,17 +87,10 @@ const DriverTrackScreen = ({ navigation }) => {
     <ScreenWrapper>
       <MapModal
         isVisible={isModalVisible}
-        onClose={() => setIsModalVisible(false)}
-        onBtnPress={() => setIsModalVisible(false)}
-        markers={
-          driverLocation
-            ? [
-                <Marker key="driverLocation" identifier="driverLocation" coordinate={driverLocation}>
-                  <BaseIcon name="taxi" size={48} />
-                </Marker>,
-              ]
-            : []
-        }
+        isLoading={getDriver.isLoading}
+        onClose={closeModal}
+        onBtnPress={closeModal}
+        markers={mapModalMarkers}
         region={
           driverLocation
             ? {
@@ -81,7 +105,7 @@ const DriverTrackScreen = ({ navigation }) => {
         title="Śledź kierowcę"
       />
       <View className="mt-16 mb-4 flex-row justify-between">
-        <BaseTitle>Trasy</BaseTitle>
+        <BaseTitle>Twoje przejazdy</BaseTitle>
         <TouchableOpacity onPress={handleRefreshPress}>
           <BaseIcon name="refresh" />
         </TouchableOpacity>
@@ -96,6 +120,9 @@ const DriverTrackScreen = ({ navigation }) => {
           status={route.status}
           origin={route.clientOrigin.address}
           destination={route.destination.address}
+          onOptionsPress={() =>
+            SheetManager.show('clientRouteOptions', { payload: { driver: route.driver, verificationCode: route.verificationCode } })
+          }
         >
           <BaseButton shadow={false} title="Śledź kierowcę" onPress={openModal} />
         </RouteItem>

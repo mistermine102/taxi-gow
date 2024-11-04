@@ -8,7 +8,7 @@ const Status = mongoose.model('Status')
 const statuses = [
   {
     _id: 1,
-    title: 'Stworzona',
+    title: 'Oczekuje',
     message: '',
     action: 'Rozpocznij',
     colors: {
@@ -53,6 +53,15 @@ const statuses = [
     colors: {
       text: '#16a34a',
       background: '#bbf7d0',
+    },
+  },
+  {
+    _id: 100,
+    title: 'Anulowana',
+    message: '',
+    colors: {
+      text: '#dc2626',
+      background: '#fecaca',
     },
   },
 ]

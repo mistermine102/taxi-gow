@@ -26,6 +26,7 @@ const addDummyClients = async () => {
       password,
       phoneNumber: '+48532395944',
       activeRoute: null,
+      routes: [],
       roles: ['client'],
     })
     client.save()

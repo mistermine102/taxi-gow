@@ -12,6 +12,10 @@ const AccountScreen = ({ navigation }) => {
 
   const tiles = [
     {
+      title: 'Twoje przejazdy',
+      screenName: 'PreviousRoutes',
+    },
+    {
       title: 'Szczegóły konta',
       screenName: 'AccountDetails',
     },

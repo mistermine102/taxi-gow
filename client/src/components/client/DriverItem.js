@@ -1,24 +1,23 @@
 import { View, Text } from 'react-native'
-import { BaseIcon} from '../base/base'
+import { BaseIcon } from '../base/base'
+import { smallShadow } from '../../../shadow'
 
 const driverItem = ({ driver, isSelected = false }) => {
   return (
-    <View className={isSelected ? 'bg-primary p-2 rounded-md' : 'bg-lightGray p-2 rounded-md'}>
-      <View className="flex-row justify-between">
-        {/* <Text className="text-lg font-bold mb-1">{driver._id.slice(0, 15)}...</Text> */}
-        <Text className="text-lg font-bold mb-1">{driver._id.slice(15)}</Text>
-        <View className="flex-row items-center gap-1">
-          <BaseIcon name="cash" size={28} />
-          <Text className="text-lg font-semibold">{driver.cost.total.toFixed(2)} zł</Text>
+    <View style={smallShadow} className={isSelected ? 'bg-primary px-2 py-4 rounded-md' : 'bg-lightGray px-2 py-4 rounded-md'}>
+      <View className="flex-row">
+        <View className=" flex-1 justify-center items-center">
+        <BaseIcon name="account" size={28} />
+        <Text className="text-[16px] font-semibold text-darkGray">{driver.name}</Text>
         </View>
-      </View>
-      <View className="flex-row items-center gap-1">
-        <BaseIcon name="car-side" />
-        <Text>Seat Ibiza</Text>
-      </View>
-      <View className="flex-row items-center gap-1">
-        <BaseIcon name="clock-time-four-outline" />
-        <Text>{driver.duration.text}</Text>
+        <View className="items-center flex-1 justify-center">
+          <BaseIcon name="cash" size={28} />
+          <Text className="text-[16px] font-semibold text-darkGray">{driver.cost.total.toFixed(2)} zł</Text>
+        </View>
+        <View className="items-center flex-1 justify-center">
+          <BaseIcon name="clock-time-four-outline" size={28} />
+          <Text className="text-[16px] font-semibold text-darkGray">{driver.waitTime} min</Text>
+        </View>
       </View>
     </View>
   )

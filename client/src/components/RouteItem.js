@@ -1,7 +1,17 @@
 import { View, Text, TouchableOpacity, Linking } from 'react-native'
 import { BaseIcon, BaseTile } from './base/base'
 
-const RouteItem = ({ children, callable = false, licensePlate, name, status, destination, origin, additionalRows = [] }) => {
+const RouteItem = ({
+  children,
+  callable = false,
+  licensePlate,
+  name,
+  status,
+  destination,
+  origin,
+  additionalRows = [],
+  onOptionsPress = () => {},
+}) => {
   const { text: textColor, background: bgColor } = status.colors
 
   return (
@@ -10,10 +20,10 @@ const RouteItem = ({ children, callable = false, licensePlate, name, status, des
         <View className="flex-row items-center">
           {callable ? (
             <TouchableOpacity onPress={() => Linking.openURL(`tel:${name}`)}>
-              <Text className="text-xl font-bold text-darkGray">{`${name.slice(0, 18)}${name.length > 18 ? '...' : ''}`}</Text>
+              <Text className="text-xl font-bold text-darkGray">{`${name.slice(0, 15)}${name.length > 15 ? '...' : ''}`}</Text>
             </TouchableOpacity>
           ) : (
-            <Text className="text-xl font-bold text-darkGray">{`${name.slice(0, 18)}${name.length > 18 ? '...' : ''}`}</Text>
+            <Text className="text-xl font-bold text-darkGray">{`${name.slice(0, 15)}${name.length > 15 ? '...' : ''}`}</Text>
           )}
 
           {licensePlate ? (
@@ -22,24 +32,29 @@ const RouteItem = ({ children, callable = false, licensePlate, name, status, des
             </View>
           ) : null}
         </View>
+        <View className="flex-row">
+          <View style={{ backgroundColor: bgColor }} className="px-2 py-1 rounded-full">
+            <Text style={{ color: textColor }} className="font-semibold">
+              {status.title}
+            </Text>
+          </View>
 
-        <View style={{ backgroundColor: bgColor }} className="px-2 py-1 rounded-full">
-          <Text style={{ color: textColor }} className="font-semibold">
-            {status.title}
-          </Text>
+          <TouchableOpacity onPress={onOptionsPress}>
+            <BaseIcon name="dots-vertical" />
+          </TouchableOpacity>
         </View>
       </View>
-      <View style={{gap: 2}}>
-        <View className="flex-row gap-x-1 items-center">
+      <View style={{ gap: 2 }}>
+        <View className="flex-row items-center" style={{gap: 2}}>
           <BaseIcon name="map-marker" />
           <Text className="text-lg">{`${origin.slice(0, 25)}${origin.length > 25 ? '...' : ''}`}</Text>
         </View>
-        <View className="flex-row items-center gap-x-1">
+        <View className="flex-row items-center" style={{gap: 2}}>
           <BaseIcon name="crosshairs-gps" />
           <Text className="text-lg">{`${destination.slice(0, 25)}${destination.length > 25 ? '...' : ''}`}</Text>
         </View>
         {additionalRows.map((row, index) => (
-          <View key={index} className="flex-row items-center gap-x-1">
+          <View key={index} className="flex-row items-center" style={{gap: 2}}>
             <BaseIcon name={row.icon} />
             <Text className="text-lg">{row.text}</Text>
           </View>

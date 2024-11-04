@@ -20,7 +20,10 @@ const SigninScreen = ({ navigation }) => {
         if (err.response && err.response.data.message === 'USER_NOT_VERIFIED') {
           return Toast.show({ type: 'error', text1: 'Błąd logowania', text2: 'Konto nie zostało zweryfikowane' })
         }
-        Toast.show({ type: 'error', text1: 'Błąd logowania', text2: 'Nieprawidłowy email lub hasło' })
+        if (err.response && err.response.data.message === 'INVALID_CREDENTIALS') {
+          return Toast.show({ type: 'error', text1: 'Błąd logowania', text2: 'Nieprawidłowy email lub hasło' })
+        }
+        Toast.show({ type: 'error', text1: 'Błąd logowania', text2: 'Coś poszło nie tak' })
       }
     )
   }

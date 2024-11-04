@@ -4,7 +4,7 @@ const EmptyModal = ({ children, isVisible, onClose }) => {
   if (!isVisible) return null
 
   return (
-    <View className="flex-1 mt-8">
+    <View>
       <Modal animationType="slide" transparent={true} visible={isVisible} onRequestClose={onClose}>
         <View className="flex-1 mt-8">
           <View style={styles.modalView} className="bg-white mx-2 my-8 flex-1 rounded-3xl items-center">

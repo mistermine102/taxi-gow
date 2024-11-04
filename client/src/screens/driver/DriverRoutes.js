@@ -2,7 +2,7 @@ import { BaseButton, BaseIcon, BaseTitle, ScreenWrapper } from '../../components
 import appApi from '../../api/appApi'
 import { useState, useContext } from 'react'
 import RouteItem from '../../components/RouteItem'
-import { TouchableOpacity, View } from 'react-native'
+import { TouchableOpacity, View, Text } from 'react-native'
 import MapModal from '../../components/modals/MapModal'
 import BackgroundTracking from '../../components/driver/BackgroundTracking'
 import { Marker } from 'react-native-maps'
@@ -12,6 +12,8 @@ import useAsyncRequest from '../../hooks/useAsyncRequest'
 import Loader from '../../components/Loader'
 import useLocation from '../../hooks/useLocation'
 import EmptyState from '../../components/EmptyState'
+import { SheetManager } from 'react-native-actions-sheet'
+import colors from '../../../colors'
 
 const DriverRoutes = () => {
   const [isModalVisible, setIsModalVisible] = useState(false)
@@ -19,7 +21,7 @@ const DriverRoutes = () => {
   const { activeRoute: route } = user
   const changeRouteStatus = useAsyncRequest()
   const refreshRoutes = useAsyncRequest()
-  const { location } = useLocation()
+  const { currentLocation } = useLocation()
 
   //this only works if statuses id's match their hierarchy
   //if we have a status that's id doesn't match it's hierarchy we have to handle it seperatly
@@ -30,7 +32,7 @@ const DriverRoutes = () => {
     const nextStatus = route.status._id + 1
 
     changeRouteStatus.send(async () => {
-      appApi.patch('/routes/' + route._id, {
+      await appApi.patch('/routes/' + route._id, {
         newStatusId: nextStatus,
       })
     })
@@ -67,14 +69,14 @@ const DriverRoutes = () => {
                 title="Zobacz trasę"
                 onClose={() => setIsModalVisible(false)}
                 markers={
-                  location
+                  currentLocation
                     ? [
                         <Marker
                           key="currentLocation"
                           identifier="currentLocation"
-                          coordinate={{ latitude: location.coords.latitude, longitude: location.coords.longitude }}
+                          coordinate={{ latitude: currentLocation.coords.latitude, longitude: currentLocation.coords.longitude }}
                         >
-                          <BaseIcon name="arrow-down-drop-circle" size={32} color="blue" />
+                          <BaseIcon name="map-marker" size={48} color={colors.currentLocationMarker} />
                         </Marker>,
                       ]
                     : []
@@ -90,10 +92,10 @@ const DriverRoutes = () => {
                   },
                 }}
                 region={{
-                  latitude: 51.4177742,
-                  longitude: 17.9270741,
-                  latitudeDelta: 0.05,
-                  longitudeDelta: 0.05,
+                  latitude: route.clientOrigin.latitude,
+                  longitude: route.clientOrigin.longitude,
+                  latitudeDelta: 0.1,
+                  longitudeDelta: 0.1,
                 }}
               />
               <RouteItem
@@ -103,6 +105,9 @@ const DriverRoutes = () => {
                 status={route.status}
                 origin={route.clientOrigin.address}
                 destination={route.destination.address}
+                onOptionsPress={() =>
+                  SheetManager.show('driverRouteOptions', { payload: { routeId: route._id, verificationCode: route.verificationCode } })
+                }
               >
                 <View className="items-end -mt-4 mb-4">
                   <RouteNavigation clientOrigin={route.clientOrigin} destination={route.destination} />

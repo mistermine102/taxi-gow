@@ -1,6 +1,8 @@
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
 import { View } from 'react-native'
 import { SERVICED_AREA_CENTER, SERVICED_AREA_RADIUS } from '../../servicedArea.js'
+import Toast from 'react-native-toast-message'
+import Loader from '../components/Loader.js'
 
 const PlacesInput = ({ placeholder, onPlaceSelect }) => {
   return (
@@ -10,6 +12,9 @@ const PlacesInput = ({ placeholder, onPlaceSelect }) => {
         placeholder={placeholder}
         nearbyPlacesAPI="GooglePlacesSearch"
         debounce={400}
+        timeout={5000}
+        listLoaderComponent={<Loader />}
+        onTimeout={() => Toast.show({ type: 'error', text1: 'Nie udało się wyszukać miejsc' })}
         fetchDetails={true}
         enablePoweredByContainer={false}
         onPress={onPlaceSelect}

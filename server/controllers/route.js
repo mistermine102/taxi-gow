@@ -1,6 +1,5 @@
 const mongoose = require('mongoose')
 const Route = mongoose.model('Route')
-const ArchivedRoute = mongoose.model('ArchivedRoute')
 const User = mongoose.model('User')
 const Status = mongoose.model('Status')
 const calculateDistances = require('../utils/calculateDistances')
@@ -8,6 +7,7 @@ const AppError = require('../classes/AppError')
 const parseCoords = require('../utils/parseCoords')
 const calculateTotalCost = require('../utils/calculateTotalCost')
 const emitWsEvent = require('../utils/emitWsEvent')
+const moveRouteToArchives = require('../utils/moveRouteToArchives')
 
 exports.createRoute = async (req, res) => {
   //1. server gets origin, destination and driverId from client (done)
@@ -67,6 +67,9 @@ exports.createRoute = async (req, res) => {
         phoneNumber: req.user.phoneNumber,
       }
 
+  //generate verification code
+  const verificationCode = Math.random().toFixed(4).toString().split('.')[1]
+
   const newRoute = new Route({
     client: routeClient,
     driver: {
@@ -109,16 +112,17 @@ exports.createRoute = async (req, res) => {
       clientDroppedOffAt: null,
       finishedAt: null,
     },
+    verificationCode,
     creationMethod: req.createdManually ? 'manual' : 'app',
   })
 
   await newRoute.save()
 
-  //change driver's isAvailable
+  //change driver's isAvailable and active route
   foundDriver.isAvailable = false
-
-  //change client's and driver's active route
   foundDriver.activeRoute = newRoute._id
+  foundDriver.routes.push(newRoute._id)
+  await foundDriver.save()
 
   //WE CAN CHANGE CLIENT'S ACTIVE ROUTE ONLY IF ROUTE ISN'T CREATED MANUALLY
   //BEACUSE ONLY THEN WE HAVE AN ACTUAL CLIENT IN DATABASE
@@ -127,6 +131,7 @@ exports.createRoute = async (req, res) => {
   if (!req.createdManually) {
     client = await User.findById(newRoute.client._id)
     client.activeRoute = newRoute._id
+    client.routes.push(newRoute._id)
     await client.save()
   }
 
@@ -139,9 +144,6 @@ exports.createRoute = async (req, res) => {
   //emit websocket events to all connected admins
   const admins = await User.find({ roles: 'admin', 'websocket.isConnected': true })
   emitWsEvent({ name: 'adminRouteCreated', payload: newRoute }, admins)
-
-  await foundDriver.save()
-
   res.json({ route: newRoute })
 }
 
@@ -151,6 +153,8 @@ exports.changeRouteStatus = async (req, res) => {
 
   const route = await Route.findById(routeId)
   let client
+
+  if (!route) throw new AppError("Can't find route", 400)
 
   //client will be undefined if route was created manually
   if (route.creationMethod !== 'manual') {
@@ -191,31 +195,20 @@ exports.changeRouteStatus = async (req, res) => {
       const actualDurationInMinutes = Math.ceil(actualDurationInMiliseconds / 1000 / 60)
       route.duration.actual = parseInt(actualDurationInMinutes)
 
-      //push the route to the archives
-      const archivedRoute = new ArchivedRoute({
-        ...route._doc,
-      })
-
-      await archivedRoute.save()
-
-      //update driver
-      driver.isAvailable = true
-      driver.activeRoute = null
-      await driver.save()
-
-      //update client (only if route was NOT created manually)
-      if (route.creationMethod !== 'manual') {
-        client.activeRoute = null
-        await client.save()
-      }
-
+      await moveRouteToArchives(route, client, driver)
       break
+    case 100:
+      //route canceled
+      route.meta.canceledAt = new Date()
+      await moveRouteToArchives(route, client, driver)
     default:
       break
   }
 
-  //save or remove (archive) the route
-  newStatusId === 5 ? await route.deleteOne() : await route.save()
+  //save route (only if it hasn't been archived)
+  if (newStatusId !== 5 && newStatusId !== 100) {
+    await route.save()
+  }
 
   //websocket event
   const wsUsers = route.creationMethod === 'manual' ? [driver] : [driver, client]

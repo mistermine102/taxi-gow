@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const AppError = require('../classes/AppError')
 const Route = mongoose.model('Route')
+const ArchivedRoute = mongoose.model("ArchivedRoute")
 const User = mongoose.model('User')
 
 exports.getRoute = async (req, res) => {
@@ -11,6 +12,7 @@ exports.getRoute = async (req, res) => {
 
 exports.getRouteDriverLocation = async (req, res) => {
   const route = await Route.findById(req.user.activeRoute)
+  if (!route) throw new AppError('No route found', 400)
   const driver = await User.findById(route.driver._id)
 
   const { latitude, longitude } = driver.currentLocation.coords
@@ -38,4 +40,9 @@ exports.updateCurrentLocation = async (req, res) => {
   const user = await User.findByIdAndUpdate(req.user._id, { currentLocation: location }, { new: true })
 
   res.json({ location: user.currentLocation })
+}
+
+exports.getRoutes = async (req, res) => {
+  const routes = await ArchivedRoute.find({ _id: { $in: req.user.routes } })
+  res.json({ routes })
 }

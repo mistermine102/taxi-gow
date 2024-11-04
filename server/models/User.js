@@ -17,6 +17,12 @@ const schema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Route',
   },
+  routes: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Route',
+    },
+  ],
   websocket: {
     id: String,
     isConnected: Boolean,
@@ -26,6 +32,11 @@ const schema = new mongoose.Schema({
     perKm: Number,
     initialCost: Number,
     currency: String,
+  },
+  vehicle: {
+    brand: String,
+    model: String,
+    year: Number,
   },
   licensePlate: String,
   currentLocation: {

@@ -23,7 +23,15 @@ const manualRouteCreateValidators = [
   body('clientPhoneNumber').notEmpty().custom(validatePhoneNumber),
 ]
 
-const changeRoutesStatusValidators = [body('newStatusId').notEmpty().isInt({ min: 1, max: 5 })]
+const changeRoutesStatusValidators = [
+  body('newStatusId')
+    .notEmpty()
+    .isInt()
+    .custom(value => {
+      if (value !== 100 && (value < 1 || value > 5)) throw new Error('Invalid route id')
+      return true
+    }),
+]
 
 const getRoutePreviewValidators = [
   query('origin').notEmpty().custom(validateCoords),

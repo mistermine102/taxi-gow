@@ -6,17 +6,20 @@ import colors from '../../../colors'
 import { smallShadow } from '../../../shadow'
 import Loader from '../Loader'
 
-export const BaseButton = ({ shadow = true, alt = false, title = 'Przycisk', onPress = () => {}, isLoading = false }) => {
+export const BaseButton = ({ icon, alt = false, title = 'Przycisk', onPress = () => {}, isLoading = false }) => {
   return (
     <TouchableOpacity
-      className={
-        alt
-          ? 'bg-transparent border border-darkGray items-center justify-center rounded-md h-10'
-          : 'bg-primary border border-primary items-center justify-center rounded-md h-10'
-      }
+      className={`items-center justify-center rounded-md h-10 ${alt ? 'bg-transparent border border-darkGray ' : 'bg-primary border border-primary'}`}
       onPress={onPress}
     >
-      {isLoading ? <Loader /> : <Text className="font-semibold text-darkGray">{title}</Text>}
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <View className="flex-row items-center" style={{ gap: 2 }}>
+          {icon ? <BaseIcon name={icon} /> : null}
+          <Text className="font-semibold text-darkGray">{title}</Text>
+        </View>
+      )}
     </TouchableOpacity>
   )
 }

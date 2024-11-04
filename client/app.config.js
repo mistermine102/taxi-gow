@@ -5,7 +5,7 @@ dotenv.config()
 
 export default ({ config }) => ({
   ...config,
-  icon: process.env.APP_ICON || './icon.png',
+  icon: process.env.APP_ICON || '.assets/icon.png',
   name: process.env.APP_NAME || 'My App',
   android: {
     config: {

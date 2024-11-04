@@ -53,7 +53,9 @@ const schema = new mongoose.Schema({
     clientPickedUpAt: Date,
     clientDroppedOffAt: Date,
     finishedAt: Date,
+    canceledAt: Date,
   },
+  verificationCode: String,
   creationMethod: String,
 })
 

@@ -1,61 +1,39 @@
 import { View } from 'react-native'
-import PlacesInput from '../../../components/PlacesInput'
-import Map from '../../../components/Map'
 import { useContext } from 'react'
 import RouteContext from '../../../context/Route'
-import { ScreenWrapper, BaseButton, BaseTitle } from '../../../components/base/base'
+import { ScreenWrapper, BaseTitle } from '../../../components/base/base'
+import SelectPointForm from '../../../components/SelectPointForm'
 
 const SelectDestination = ({ navigation }) => {
   const { route, setDestination } = useContext(RouteContext)
-  const { clientOrigin: origin, destination } = route
+  const { clientOrigin, destination } = route
 
-  const onPlaceSelect = (data, details) => {
-    const { lat, lng } = details.geometry.location
-    setDestination({ coords: { latitude: lat, longitude: lng }, address: details.formatted_address })
-  }
+  const destinationPoint = destination
+    ? {
+        ...destination.coords,
+        name: 'destination',
+      }
+    : null
+
+  const clientOriginPoint = clientOrigin
+    ? {
+        ...clientOrigin.coords,
+        name: 'clientOrigin',
+      }
+    : null
 
   return (
     <ScreenWrapper>
-      <View className="mt-16">
+      <View className="mt-16 mb-4">
         <BaseTitle>Dokąd chcesz dojechać?</BaseTitle>
       </View>
-      <View className="mt-4">
-        <PlacesInput placeholder="Wpisz nazwę ulicy" onPlaceSelect={onPlaceSelect} />
-      </View>
-
-      {origin ? (
-        <View className="mt-8">
-          {destination ? (
-            <Map
-              rounded
-              region={{
-                latitude: origin.coords.latitude,
-                longitude: origin.coords.longitude,
-                latitudeDelta: 0.5,
-                longitudeDelta: 0.5,
-              }}
-              directions={{ origin: origin.coords, destination: destination.coords }}
-            />
-          ) : (
-            <Map
-              rounded
-              region={{
-                latitude: origin.coords.latitude,
-                longitude: origin.coords.longitude,
-                latitudeDelta: 0.5,
-                longitudeDelta: 0.5,
-              }}
-              directions={{ origin: origin.coords }}
-            />
-          )}
-
-          {destination ? (
-            <View className="mt-4">
-              <BaseButton title="Kontynuuj" onPress={() => navigation.navigate('SelectDriver')} />
-            </View>
-          ) : null}
-        </View>
-      ) : null}
+      <SelectPointForm
+        point={destinationPoint}
+        allPoints={[clientOriginPoint, destinationPoint]}
+        onPointAdded={p => setDestination({ coords: p })}
+        directions={clientOrigin && destination ? { origin: clientOrigin.coords, destination: destination.coords } : undefined}
+        onContinue={() => navigation.navigate('SelectDriver')}
+      />
     </ScreenWrapper>
   )
 }

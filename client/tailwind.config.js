@@ -9,6 +9,7 @@ module.exports = {
         primary: 'NotoSans_400Regular'
       },
       colors: {
+        danger: colors.danger,
         primary: colors.primary,
         darkGray: colors.darkGray,
         lightGray: colors.lightGray,

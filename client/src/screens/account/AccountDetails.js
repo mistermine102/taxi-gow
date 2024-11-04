@@ -20,7 +20,7 @@ const AccountDetails = () => {
         </View>
       </BaseTile>
       <View className="mt-4">
-        <BaseButton onPress={signout} title="Wyloguj" />
+        <BaseButton icon="logout" onPress={signout} title="Wyloguj" />
       </View>
     </ScreenWrapper>
   )

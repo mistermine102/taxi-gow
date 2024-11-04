@@ -34,34 +34,6 @@ const addDummyDrivers = async (req, res) => {
     },
   ]
 
-  const dummyPrices = [
-    {
-      perKm: 5,
-      initialCost: 15,
-      currency: 'PLN',
-    },
-    {
-      perKm: 3,
-      initialCost: 20,
-      currency: 'PLN',
-    },
-    {
-      perKm: 6,
-      initialCost: 20,
-      currency: 'PLN',
-    },
-    {
-      perKm: 3.5,
-      initialCost: 18,
-      currency: 'PLN',
-    },
-    {
-      perKm: 4,
-      initialCost: 25,
-      currency: 'PLN',
-    },
-  ]
-
   const dummyNames = ['Jan', 'Wiktor', 'Marek', 'Kamil', 'Sebastian']
   const dummyPlates = ['POT HUF2', 'POS 34789', 'PKE DH67', 'POT 9C7A', 'PKE NZA9']
 
@@ -81,8 +53,18 @@ const addDummyDrivers = async (req, res) => {
       roles: ['driver'],
       isAvailable: true,
       activeRoute: null,
-      pricing: dummyPrices[i],
+      routes: [],
+      pricing: {
+        perKm: 5,
+        initialCost: 15,
+        currency: 'PLN',
+      },
       licensePlate: dummyPlates[i],
+      vehicle: {
+        brand: 'Seat',
+        model: 'Ibiza',
+        year: 2010,
+      },
       currentLocation: {
         timestamp: 10000,
         coords: {

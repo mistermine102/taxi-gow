@@ -4,5 +4,7 @@ module.exports = {
   lightGray: '#EDEDED',
   activeTab: '#F3D464',
   inActiveTab: '#9ca3af',
-  disabledTab: '#d1d5db'
+  disabledTab: '#d1d5db',
+  currentLocationMarker: '#0ea5e9',
+  danger: '#dc2626',
 }

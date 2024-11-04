@@ -30,12 +30,13 @@ exports.signup = async (req, res) => {
     phoneNumber,
     name: '',
     activeRoute: null,
+    routes: [],
     roles: ['client'],
   })
   await newUser.save()
 
   //generate url with token
-  const baseUrl = 'https://1629-109-173-197-185.ngrok-free.app'
+  const baseUrl = 'https://569b-109-173-197-185.ngrok-free.app'
   const token = jwt.sign({ userId: newUser._id }, process.env.JWT_EMAIL_SECRET, { expiresIn: 1800 })
   const link = `${baseUrl}/user/verify/${token}`
 
@@ -61,11 +62,11 @@ exports.signin = async (req, res) => {
 
   //find user by email
   const user = await User.findOne({ email })
-  if (!user) throw new AppError('Invalid email or password', 400)
+  if (!user) throw new AppError('INVALID_CREDENTIALS', 400)
 
   //check password
   const isPasswordCorrect = await bcrypt.compare(password, user.password)
-  if (!isPasswordCorrect) throw new AppError('Invalid email or password', 400)
+  if (!isPasswordCorrect) throw new AppError('INVALID_CREDENTIALS', 400)
 
   //create token
   const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET)
