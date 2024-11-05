@@ -44,5 +44,9 @@ exports.updateCurrentLocation = async (req, res) => {
 
 exports.getRoutes = async (req, res) => {
   const routes = await ArchivedRoute.find({ _id: { $in: req.user.routes } })
+
+  //routes are retreived from oldest to newest so reversing it makes it from newest to oldest
+  routes.reverse()
+
   res.json({ routes })
 }

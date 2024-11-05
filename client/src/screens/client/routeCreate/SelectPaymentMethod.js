@@ -1,5 +1,10 @@
 import { FlatList, Text, View } from 'react-native'
-import { ScreenWrapper, BaseTitle, BaseIcon } from '../../../components/base/base'
+import {
+  ScreenWrapper,
+  BaseTitle,
+  BaseIcon,
+  BaseButton,
+} from '../../../components/base/base'
 import PressableTile from '../../../components/PressableTile'
 import colors from '../../../../colors'
 import { useContext, useState } from 'react'
@@ -20,12 +25,20 @@ const SelectPaymentMethodScreen = ({ navigation }) => {
       title: 'Zapłać teraz',
       icon: 'contactless-payment-circle-outline',
     },
+    {
+      id: 2,
+      name: 'inPerson',
+      title: 'Zapłać w taksówce',
+      icon: 'taxi',
+    },
   ]
 
   const handleRouteCreate = async () => {
     createRoute.send(async () => {
-      const { latitude: clientLatitude, longitude: clientLongitude } = route.clientOrigin.coords
-      const { latitude: destinationLatitude, longitude: destinationLongitude } = route.destination.coords
+      const { latitude: clientLatitude, longitude: clientLongitude } =
+        route.clientOrigin.coords
+      const { latitude: destinationLatitude, longitude: destinationLongitude } =
+        route.destination.coords
 
       const clientOrigin = `${clientLatitude}, ${clientLongitude}`
       const destination = `${destinationLatitude}, ${destinationLongitude}`
@@ -55,19 +68,45 @@ const SelectPaymentMethodScreen = ({ navigation }) => {
       <View className="mt-16 mb-4">
         <BaseTitle>Wybierz metodę płatności</BaseTitle>
       </View>
-      <View style={{ gap: 16 }}>
+      <View>
         <FlatList
+          contentContainerStyle={{
+            gap: 16,
+            paddingVertical: 16,
+          }}
           data={PAYMENT_METHODS}
-          keyExtractor={item => item.id}
+          keyExtractor={(item) => item.id}
           renderItem={({ item: paymentMethod }) => (
-            <PressableTile onPress={() => setSelectedPaymentMethod()} showIcon={false}>
+            <PressableTile
+              isSelected={paymentMethod.id === selectedPaymentMethod?.id}
+              onPress={() => setSelectedPaymentMethod(paymentMethod)}
+              showIcon={false}
+            >
               <View className="items-center py-4">
-                <Text className="text-darkGray font-bold text-xl mb-2">{paymentMethod.title}</Text>
-                <BaseIcon name={paymentMethod.icon} size={64} color={colors.primary} />
+                <Text className="text-darkGray font-bold text-xl mb-2">
+                  {paymentMethod.title}
+                </Text>
+                <BaseIcon
+                  name={paymentMethod.icon}
+                  size={64}
+                  color={
+                    paymentMethod.id === selectedPaymentMethod?.id
+                      ? colors.darkGray
+                      : colors.primary
+                  }
+                />
               </View>
             </PressableTile>
           )}
         />
+        {selectedPaymentMethod ? (
+          <View>
+            <BaseButton onPress={handleRouteCreate} isLoading={createRoute.isLoading} title="Zamów przejazd" />
+            <Text className="text-xs mt-2">
+              *Zamawiając przejazd wyrażasz zgodę na zawarcie umowy przejazdu
+            </Text>
+          </View>
+        ) : null}
       </View>
     </ScreenWrapper>
   )

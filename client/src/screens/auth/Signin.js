@@ -1,7 +1,13 @@
 import { View } from 'react-native'
 import { useState, useContext } from 'react'
 import AuthContext from '../../context/Auth'
-import { BaseInput, BaseButton, BaseLink, ScreenWrapper, BaseTitle } from '../../components/base/base'
+import {
+  BaseInput,
+  BaseButton,
+  BaseLink,
+  ScreenWrapper,
+  BaseTitle,
+} from '../../components/base/base'
 import useAsyncRequest from '../../hooks/useAsyncRequest'
 import Toast from 'react-native-toast-message'
 
@@ -16,14 +22,36 @@ const SigninScreen = ({ navigation }) => {
       async () => {
         await signin({ email, password })
       },
-      err => {
+      (err) => {
+        if (err.response) {
+          switch (err.response.data.message) {
+            case 'USER_NOT_VERIFIED':
+              //show modal with resending email
+              return
+
+            default:
+              break
+          }
+        }
+
         if (err.response && err.response.data.message === 'USER_NOT_VERIFIED') {
-          return Toast.show({ type: 'error', text1: 'Błąd logowania', text2: 'Konto nie zostało zweryfikowane' })
+          return
         }
-        if (err.response && err.response.data.message === 'INVALID_CREDENTIALS') {
-          return Toast.show({ type: 'error', text1: 'Błąd logowania', text2: 'Nieprawidłowy email lub hasło' })
+        if (
+          err.response &&
+          err.response.data.message === 'INVALID_CREDENTIALS'
+        ) {
+          return Toast.show({
+            type: 'error',
+            text1: 'Błąd logowania',
+            text2: 'Nieprawidłowy email lub hasło',
+          })
         }
-        Toast.show({ type: 'error', text1: 'Błąd logowania', text2: 'Coś poszło nie tak' })
+        Toast.show({
+          type: 'error',
+          text1: 'Błąd logowania',
+          text2: 'Coś poszło nie tak',
+        })
       }
     )
   }
@@ -35,10 +63,22 @@ const SigninScreen = ({ navigation }) => {
       </View>
       <View className="mt-4 mb-2" style={{ gap: 16 }}>
         <BaseInput value={email} onChangeText={setEmail} placeholder="Email" />
-        <BaseInput value={password} onChangeText={setPassword} secureTextEntry placeholder="Hasło" />
-        <BaseButton onPress={onSubmit} title="Zaloguj się" isLoading={isLoading} />
+        <BaseInput
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+          placeholder="Hasło"
+        />
+        <BaseButton
+          onPress={onSubmit}
+          title="Zaloguj się"
+          isLoading={isLoading}
+        />
       </View>
-      <BaseLink title="Nie masz konta? Zarejestruj się" onPress={() => navigation.navigate('Signup')} />
+      <BaseLink
+        title="Nie masz konta? Zarejestruj się"
+        onPress={() => navigation.navigate('Signup')}
+      />
     </ScreenWrapper>
   )
 }

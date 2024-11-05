@@ -10,7 +10,7 @@ const RouteItem = ({
   destination,
   origin,
   additionalRows = [],
-  onOptionsPress = () => {},
+  onOptionsPress,
 }) => {
   const { text: textColor, background: bgColor } = status.colors
 
@@ -20,10 +20,16 @@ const RouteItem = ({
         <View className="flex-row items-center">
           {callable ? (
             <TouchableOpacity onPress={() => Linking.openURL(`tel:${name}`)}>
-              <Text className="text-xl font-bold text-darkGray">{`${name.slice(0, 15)}${name.length > 15 ? '...' : ''}`}</Text>
+              <Text className="text-xl font-bold text-darkGray">{`${name.slice(
+                0,
+                15
+              )}${name.length > 15 ? '...' : ''}`}</Text>
             </TouchableOpacity>
           ) : (
-            <Text className="text-xl font-bold text-darkGray">{`${name.slice(0, 15)}${name.length > 15 ? '...' : ''}`}</Text>
+            <Text className="text-xl font-bold text-darkGray">{`${name.slice(
+              0,
+              15
+            )}${name.length > 15 ? '...' : ''}`}</Text>
           )}
 
           {licensePlate ? (
@@ -33,28 +39,41 @@ const RouteItem = ({
           ) : null}
         </View>
         <View className="flex-row">
-          <View style={{ backgroundColor: bgColor }} className="px-2 py-1 rounded-full">
+          <View
+            style={{ backgroundColor: bgColor }}
+            className="px-2 py-1 rounded-full"
+          >
             <Text style={{ color: textColor }} className="font-semibold">
               {status.title}
             </Text>
           </View>
 
-          <TouchableOpacity onPress={onOptionsPress}>
-            <BaseIcon name="dots-vertical" />
-          </TouchableOpacity>
+          {onOptionsPress ? (
+            <TouchableOpacity onPress={onOptionsPress}>
+              <BaseIcon name="dots-vertical" />
+            </TouchableOpacity>
+          ) : null}
         </View>
       </View>
       <View style={{ gap: 2 }}>
-        <View className="flex-row items-center" style={{gap: 2}}>
+        <View className="flex-row items-center" style={{ gap: 2 }}>
           <BaseIcon name="map-marker" />
-          <Text className="text-lg">{`${origin.slice(0, 25)}${origin.length > 25 ? '...' : ''}`}</Text>
+          <Text className="text-lg">{`${origin.slice(0, 25)}${
+            origin.length > 25 ? '...' : ''
+          }`}</Text>
         </View>
-        <View className="flex-row items-center" style={{gap: 2}}>
+        <View className="flex-row items-center" style={{ gap: 2 }}>
           <BaseIcon name="crosshairs-gps" />
-          <Text className="text-lg">{`${destination.slice(0, 25)}${destination.length > 25 ? '...' : ''}`}</Text>
+          <Text className="text-lg">{`${destination.slice(0, 25)}${
+            destination.length > 25 ? '...' : ''
+          }`}</Text>
         </View>
         {additionalRows.map((row, index) => (
-          <View key={index} className="flex-row items-center" style={{gap: 2}}>
+          <View
+            key={index}
+            className="flex-row items-center"
+            style={{ gap: 2 }}
+          >
             <BaseIcon name={row.icon} />
             <Text className="text-lg">{row.text}</Text>
           </View>

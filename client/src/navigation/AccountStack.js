@@ -13,7 +13,7 @@ const AccountStack = () => {
   return (
     <Stack.Navigator screenOptions={{ headerTitleStyle: { color: colors.darkGray } }}>
       <Stack.Screen options={{ title: 'Konto' }} name="Account" component={AccountScreen} />
-      <Stack.Screen options={{ title: 'Twoje przejazdy' }} name="PreviousRoutes" component={PreviousRoutesScreen} />
+      <Stack.Screen options={{ title: 'Historia przejazdów' }} name="RoutesHistory" component={PreviousRoutesScreen} />
       <Stack.Screen options={{ title: 'Szczegóły konta' }} name="AccountDetails" component={AccountDetailsScreen} />
       <Stack.Screen options={{ title: 'Polityka prywatności' }} name="PrivacyPolicy" component={PrivacyPolicyScreen} />
       <Stack.Screen options={{ title: 'Regulamin' }} name="Terms" component={TermsScreen} />

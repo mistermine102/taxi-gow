@@ -26,7 +26,7 @@ const PreviousRoutesScreen = () => {
   return (
     <ScreenWrapper>
       <View className="mt-16 mb-4">
-        <BaseTitle>Twoje przejazdy</BaseTitle>
+        <BaseTitle>Historia przejazdów</BaseTitle>
       </View>
 
       {getRoutes.isLoading ? (
