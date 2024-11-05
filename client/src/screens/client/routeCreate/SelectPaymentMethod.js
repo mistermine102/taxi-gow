@@ -1,4 +1,4 @@
-import { Text, View } from 'react-native'
+import { FlatList, Text, View } from 'react-native'
 import { ScreenWrapper, BaseTitle, BaseIcon } from '../../../components/base/base'
 import PressableTile from '../../../components/PressableTile'
 import colors from '../../../../colors'
@@ -11,7 +11,16 @@ import useAsyncRequest from '../../../hooks/useAsyncRequest'
 const SelectPaymentMethodScreen = ({ navigation }) => {
   const { route, clearRoute } = useContext(RouteContext)
   const createRoute = useAsyncRequest()
-  const [isRouteCreated, setIsRouteCreated] = useState(false)
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState()
+
+  const PAYMENT_METHODS = [
+    {
+      id: 1,
+      name: 'inApp',
+      title: 'Zapłać teraz',
+      icon: 'contactless-payment-circle-outline',
+    },
+  ]
 
   const handleRouteCreate = async () => {
     createRoute.send(async () => {
@@ -26,8 +35,6 @@ const SelectPaymentMethodScreen = ({ navigation }) => {
         destination,
         driverId: route.driver._id,
       })
-
-      setIsRouteCreated(true)
 
       navigation.dispatch(
         CommonActions.reset({
@@ -49,18 +56,18 @@ const SelectPaymentMethodScreen = ({ navigation }) => {
         <BaseTitle>Wybierz metodę płatności</BaseTitle>
       </View>
       <View style={{ gap: 16 }}>
-        <PressableTile onPress={handleRouteCreate} showIcon={false}>
-          <View className="items-center py-4">
-            <Text className="text-darkGray font-bold text-xl mb-2">Zapłać teraz</Text>
-            <BaseIcon name="contactless-payment-circle-outline" size={64} color={colors.primary} />
-          </View>
-        </PressableTile>
-        <PressableTile onPress={handleRouteCreate} showIcon={false}>
-          <View className="items-center py-4">
-            <Text className="text-darkGray font-bold text-xl mb-2">Zapłać w taksówce</Text>
-            <BaseIcon name="taxi" size={64} color={colors.primary} />
-          </View>
-        </PressableTile>
+        <FlatList
+          data={PAYMENT_METHODS}
+          keyExtractor={item => item.id}
+          renderItem={({ item: paymentMethod }) => (
+            <PressableTile onPress={() => setSelectedPaymentMethod()} showIcon={false}>
+              <View className="items-center py-4">
+                <Text className="text-darkGray font-bold text-xl mb-2">{paymentMethod.title}</Text>
+                <BaseIcon name={paymentMethod.icon} size={64} color={colors.primary} />
+              </View>
+            </PressableTile>
+          )}
+        />
       </View>
     </ScreenWrapper>
   )

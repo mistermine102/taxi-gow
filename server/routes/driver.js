@@ -1,5 +1,5 @@
 const express = require('express')
-const { getDrivers, getDriverLocation, getAllDrivers } = require('../controllers/driver')
+const { getDriverLocation, getAllDrivers, getOptimalDriver } = require('../controllers/driver')
 const { isAuthenticated, hasRole } = require('../middleware/auth')
 const { query } = require('express-validator')
 const validate = require('../middleware/validate')
@@ -20,7 +20,7 @@ const getDriverLocationValidators = [
     }),
 ]
 
-router.get('/', isAuthenticated, getDriversValidators, validate, tryCatch(getDrivers))
+router.get('/optimal', isAuthenticated, getDriversValidators, validate, tryCatch(getOptimalDriver))
 
 router.get('/all', isAuthenticated, hasRole('admin'), tryCatch(getAllDrivers))
 

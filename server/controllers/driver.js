@@ -4,7 +4,7 @@ const calculateDistances = require('../utils/calculateDistances')
 const calculateTotalCost = require('../utils/calculateTotalCost')
 const AppError = require('../classes/AppError')
 
-exports.getDrivers = async (req, res) => {
+exports.getOptimalDriver = async (req, res) => {
   //receive information about client's origin
   //origin and destination in format "37.223,17.998"
   const { origin: clientOrigin, destination } = req.query
@@ -68,11 +68,11 @@ exports.getDrivers = async (req, res) => {
     })
   }
 
-  tranformedDrivers.sort((a, b) => a.waitTime - b.waitTime)
+  const optimalDriver = tranformedDrivers.reduce((acc, driver) => (driver.waitTime < acc.waitTime ? driver : acc))
 
   ///send response
   res.json({
-    drivers: tranformedDrivers,
+    optimalDriver: optimalDriver,
     route: {
       distance: routeDistanceInKm,
       duration: routeDurationInMinutes,
