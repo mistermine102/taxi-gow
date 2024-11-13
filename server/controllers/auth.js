@@ -33,7 +33,7 @@ exports.signup = async (req, res) => {
   })
   await newUser.save()
 
-  await sendVerifyEmail()
+  await sendVerifyEmail(newUser)
 
   res.json({ message: `Verification email was sent to ${newUser.email}` })
 }
@@ -58,7 +58,9 @@ exports.signin = async (req, res) => {
 
   //transform user (strip unnecessary information like password etc)
   const transformedUser = user.transform()
-  transformedUser.activeRoute = await Route.findById(transformedUser.activeRoute)
+  transformedUser.activeRoute = await Route.findById(
+    transformedUser.activeRoute
+  )
 
   res.json({
     token,
@@ -68,7 +70,9 @@ exports.signin = async (req, res) => {
 
 exports.getUser = async (req, res) => {
   const transformedUser = req.user.transform()
-  transformedUser.activeRoute = await Route.findById(transformedUser.activeRoute)
+  transformedUser.activeRoute = await Route.findById(
+    transformedUser.activeRoute
+  )
 
   res.json({
     user: transformedUser,
@@ -92,6 +96,16 @@ exports.verifyUser = async (req, res) => {
     if (err.name === 'TokenExpiredError') {
       return res.send('Minał czas ważności linku')
     }
-    res.send('Coś poszło nie tak przy weryfikacji konta. Spróbuj zarejestrować się ponownie')
+    res.send(
+      'Coś poszło nie tak przy weryfikacji konta. Spróbuj zarejestrować się ponownie'
+    )
   }
+}
+
+exports.sendVerifyEmail = async (req, res) => {
+  //find the user that tried to signin
+  
+
+  await sendVerifyEmail()
+  res.json({ message: 'Email sent' })
 }

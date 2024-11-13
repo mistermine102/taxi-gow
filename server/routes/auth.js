@@ -2,7 +2,13 @@ const express = require('express')
 const { body } = require('express-validator')
 const tryCatch = require('../utils/tryCatch')
 const router = express.Router()
-const { signup, signin, getUser, verifyUser } = require('../controllers/auth')
+const {
+  signup,
+  signin,
+  getUser,
+  verifyUser,
+  sendVerifyEmail,
+} = require('../controllers/auth')
 const validate = require('../middleware/validate')
 const { isAuthenticated } = require('../middleware/auth')
 const validatePhoneNumber = require('../utils/validatePhoneNumber')
@@ -22,5 +28,7 @@ router.post('/signin', tryCatch(signin))
 router.get('/user', isAuthenticated, tryCatch(getUser))
 
 router.get('/user/verify/:token', verifyUser)
+
+router.post('/user/verify/send', tryCatch(sendVerifyEmail))
 
 module.exports = router
