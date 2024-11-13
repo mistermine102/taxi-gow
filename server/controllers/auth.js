@@ -5,9 +5,7 @@ const UnconfirmedUser = mongoose.model('UnconfirmedUser')
 const Route = mongoose.model('Route')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const transporter = require('../emails/transporter')
-const ejs = require('ejs')
-const path = require('path')
+const sendVerifyEmail = require('../utils/sendVerifyEmail')
 
 exports.signup = async (req, res) => {
   const { email, password, phoneNumber } = req.body
@@ -35,20 +33,7 @@ exports.signup = async (req, res) => {
   })
   await newUser.save()
 
-  //generate url with token
-  const baseUrl = 'https://569b-109-173-197-185.ngrok-free.app'
-  const token = jwt.sign({ userId: newUser._id }, process.env.JWT_EMAIL_SECRET, { expiresIn: 1800 })
-  const link = `${baseUrl}/user/verify/${token}`
-
-  const template = await ejs.renderFile(path.join(__dirname, '..//templates/verificationEmail.ejs'), { verificationLink: link })
-
-  //send a confirmation email
-  await transporter.sendMail({
-    from: 'Taxi Gow', // sender address
-    to: newUser.email,
-    subject: `Zweryfikuj swój adres email`, // Subject line
-    html: template, // html body
-  })
+  await sendVerifyEmail()
 
   res.json({ message: `Verification email was sent to ${newUser.email}` })
 }
