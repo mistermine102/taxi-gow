@@ -33,7 +33,7 @@ exports.signup = async (req, res) => {
   })
   await newUser.save()
 
-  await sendVerifyEmail(newUser)
+  await sendVerifyEmail(newUser.email)
 
   res.json({ message: `Verification email was sent to ${newUser.email}` })
 }
@@ -58,9 +58,7 @@ exports.signin = async (req, res) => {
 
   //transform user (strip unnecessary information like password etc)
   const transformedUser = user.transform()
-  transformedUser.activeRoute = await Route.findById(
-    transformedUser.activeRoute
-  )
+  transformedUser.activeRoute = await Route.findById(transformedUser.activeRoute)
 
   res.json({
     token,
@@ -70,9 +68,7 @@ exports.signin = async (req, res) => {
 
 exports.getUser = async (req, res) => {
   const transformedUser = req.user.transform()
-  transformedUser.activeRoute = await Route.findById(
-    transformedUser.activeRoute
-  )
+  transformedUser.activeRoute = await Route.findById(transformedUser.activeRoute)
 
   res.json({
     user: transformedUser,
@@ -82,9 +78,9 @@ exports.getUser = async (req, res) => {
 exports.verifyUser = async (req, res) => {
   try {
     const { token } = req.params
-    const { userId } = jwt.verify(token, process.env.JWT_EMAIL_SECRET)
+    const { email } = jwt.verify(token, process.env.JWT_EMAIL_SECRET)
 
-    const unconfirmedUser = await UnconfirmedUser.findById(userId)
+    const unconfirmedUser = await UnconfirmedUser.findOne({ email })
     const newUser = new User({ ...unconfirmedUser._doc })
 
     await newUser.save()
@@ -96,16 +92,14 @@ exports.verifyUser = async (req, res) => {
     if (err.name === 'TokenExpiredError') {
       return res.send('Minał czas ważności linku')
     }
-    res.send(
-      'Coś poszło nie tak przy weryfikacji konta. Spróbuj zarejestrować się ponownie'
-    )
+    res.send('Coś poszło nie tak przy weryfikacji konta. Spróbuj zarejestrować się ponownie')
   }
 }
 
 exports.sendVerifyEmail = async (req, res) => {
   //find the user that tried to signin
-  
+  const { email } = req.body
+  await sendVerifyEmail(email)
 
-  await sendVerifyEmail()
-  res.json({ message: 'Email sent' })
+  res.json({ message: 'Verification email sent' })
 }

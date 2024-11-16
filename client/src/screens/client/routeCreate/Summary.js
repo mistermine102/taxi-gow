@@ -1,13 +1,20 @@
-import { View, Text, ScrollView } from 'react-native'
-import { useContext, useState } from 'react'
+import { View, Text, ScrollView, TouchableOpacity, BackHandler } from 'react-native'
+import { useContext, useEffect, useState } from 'react'
 import RouteContext from '../../../context/Route'
 import { ScreenWrapper, BaseButton, BaseTitle, BaseLabel, BaseTile } from '../../../components/base/base'
-import moment from 'moment'
+import Checkbox from 'expo-checkbox'
+import colors from '../../../../colors'
+import Toast from 'react-native-toast-message'
 
 const Summary = ({ navigation }) => {
   const { route } = useContext(RouteContext)
+  const [isTermsChecked, setIsTermChecked] = useState(false)
 
   const navigateToSelectPaymentMethod = () => {
+    if (!isTermsChecked) {
+      Toast.show({ type: 'error', text1: 'Zaznacz wymagane pola', text2: 'Zaznacz wymagane pola aby przejść dalej' })
+      return
+    }
     navigation.navigate('SelectPaymentMethod')
   }
 
@@ -47,6 +54,18 @@ const Summary = ({ navigation }) => {
       </BaseTile>
       <View className="mt-4">
         <BaseButton title="Przejdź do płatności" onPress={navigateToSelectPaymentMethod} />
+        <View className="flex-row  items-center mt-2">
+          <TouchableOpacity onPress={() => setIsTermChecked(!isTermsChecked)} className="flex-row items-center" style={{ gap: 4 }}>
+            <Checkbox value={isTermsChecked} color={isTermsChecked ? colors.primary : undefined} onValueChange={setIsTermChecked} />
+            <View className="flex-row" style={{ gap: 2 }}>
+              <Text>Akceptuję</Text>
+              <TouchableOpacity onPress={() => navigation.navigate('AccountStack')}>
+                <Text className="font-bold underline">regulamin aplikacji</Text>
+              </TouchableOpacity>
+            </View>
+          </TouchableOpacity>
+          <Text className=" text-red-600 ml-1">Wymagane</Text>
+        </View>
       </View>
     </ScreenWrapper>
   )

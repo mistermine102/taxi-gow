@@ -5,6 +5,7 @@ import PrivacyPolicyScreen from '../screens/account/PrivacyPolicy'
 import TermsScreen from '../screens/account/Terms'
 import AboutFirmScreen from '../screens/account/AboutFirm'
 import PreviousRoutesScreen from '../screens/account/PreviousRoutes'
+import PricingScreen from '../screens/account/Pricing'
 import colors from '../../colors'
 
 const Stack = createNativeStackNavigator()
@@ -18,6 +19,7 @@ const AccountStack = () => {
       <Stack.Screen options={{ title: 'Polityka prywatności' }} name="PrivacyPolicy" component={PrivacyPolicyScreen} />
       <Stack.Screen options={{ title: 'Regulamin' }} name="Terms" component={TermsScreen} />
       <Stack.Screen options={{ title: 'Informacje o firmie' }} name="AboutFirm" component={AboutFirmScreen} />
+      <Stack.Screen options={{ title: 'Cennik' }} name="Pricing" component={PricingScreen} />
     </Stack.Navigator>
   )
 }

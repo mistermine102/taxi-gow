@@ -1,5 +1,5 @@
 import { View, Text } from 'react-native'
-import { BaseTile, BaseTitle, ScreenWrapper } from '../../components/base/base'
+import { BaseIcon, BaseTile, BaseTitle, ScreenWrapper } from '../../components/base/base'
 import PressableTile from '../../components/PressableTile'
 import { useContext } from 'react'
 import AuthContext from '../../context/Auth'
@@ -14,22 +14,32 @@ const AccountScreen = ({ navigation }) => {
     {
       title: 'Historia przejazdów',
       screenName: 'RoutesHistory',
+      icon: 'history',
     },
     {
       title: 'Szczegóły konta',
       screenName: 'AccountDetails',
+      icon: 'account-details',
+    },
+    {
+      title: 'Cennik',
+      screenName: 'Pricing',
+      icon: 'currency-usd',
     },
     {
       title: 'Regulamin',
       screenName: 'Terms',
+      icon: 'gavel',
     },
     {
       title: 'Polityka prywatności',
       screenName: 'PrivacyPolicy',
+      icon: 'file-document',
     },
     {
       title: 'O firmie',
       screenName: 'AboutFirm',
+      icon: 'taxi',
     },
   ]
 
@@ -42,7 +52,7 @@ const AccountScreen = ({ navigation }) => {
         <View className="mb-4">
           <BaseTile>
             <View>
-              <IsAvailable/>
+              <IsAvailable />
             </View>
           </BaseTile>
         </View>
@@ -50,7 +60,10 @@ const AccountScreen = ({ navigation }) => {
       <View style={{ gap: 8 }}>
         {tiles.map((tile, index) => (
           <PressableTile key={index} onPress={() => navigation.navigate(tile.screenName)}>
-            <Text className="font-semibold text-darkGray">{tile.title}</Text>
+            <View className="flex-row items-center" style={{ gap: 8 }}>
+              <BaseIcon name={tile.icon} />
+              <Text className="font-semibold text-darkGray">{tile.title}</Text>
+            </View>
           </PressableTile>
         ))}
       </View>
